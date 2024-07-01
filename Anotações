@@ -1,0 +1,11 @@
+Node 20.15.0
+
+Vuetify
+
+axios -> npm install --save axios vue-axios
+
+vue-router -> npm install vue-router
+
+pinia -> npm i pinia
+
+eslint -> npm init @eslint/config@latest
