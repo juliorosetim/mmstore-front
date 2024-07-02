@@ -5,9 +5,26 @@ import {createMemoryHistory, createRouter} from 'vue-router';
 // import CadastroClienteView from '@/Views/CadastroClienteView.vue';
 
 const routes = [
-    {path: '/', component: () => import('@/Views/HomeView.vue')},
-    {path: '/cadastro-cliente', component: () => import('@/Views/CadastroClienteView.vue')},
-    {path: '/sobre', component: () => import('@/Views/SobreView.vue')},
+    {
+      path: '/', 
+      name: "home",
+      component: () => import('@/Views/HomeView.vue')
+    },
+    {
+      path: '/consulta-cliente', 
+      name: 'ConsultaCliente',
+      component: () => import('@/Views/ConsultaClienteView.vue')
+    },
+    {
+      path: '/sobre',
+      name: 'sobre', 
+      component: () => import('@/Views/SobreView.vue')
+    },
+    {
+      path: '/cadastro-cliente',
+      name: "CadastroCliente", 
+      component: () => import('@/Views/CadastroClienteView')
+    }
 ]
 
 const router = createRouter({

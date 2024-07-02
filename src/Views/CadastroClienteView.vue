@@ -5,6 +5,6 @@
 </template>
 
 <script Lang="ts" setup>
-    import CadastroClienteComponent from '@/components/CadastroClienteComponent'
+    import CadastroClienteComponent from '@/components/CadastroClienteComponent.vue';
 
 </script>

@@ -35,9 +35,9 @@
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-account"
-            title="Cadastro de Clientes"
-            value="cadastro-cliente"
-            :to="{ path: '/cadastro-cliente' }"
+            title="Consulta de Clientes"
+            value="consulta-cliente"
+            :to="{ path: '/consulta-cliente' }"
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-credit-card"

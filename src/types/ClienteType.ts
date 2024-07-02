@@ -1,4 +1,4 @@
-export type Cliente = {
+interface Cliente {
     idCliente: number;
     nmCliente: string;
     cpfCnpj: string;
@@ -12,4 +12,6 @@ export type Cliente = {
     cidade: string;
     nmContato: string;
     complemento: string;
-};
+};  
+
+export default Cliente;

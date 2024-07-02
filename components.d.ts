@@ -8,6 +8,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CadastroClienteComponent: typeof import('./src/components/CadastroClienteComponent.vue')['default']
+    CadastroClienteDialog: typeof import('./src/components/CadastroClienteDialog.vue')['default']
+    ComponentTeste: typeof import('./src/components/ComponentTeste.vue')['default']
+    ConsultaClienteComponent: typeof import('./src/components/ConsultaClienteComponent.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
