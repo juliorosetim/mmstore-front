@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <cadastro-cliente-component />
-  </div>
+  <v-responsive>
+      <cadastro-cliente-component />
+  </v-responsive>
 </template>
 
 <script Lang="ts" setup>

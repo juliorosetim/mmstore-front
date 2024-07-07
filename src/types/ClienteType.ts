@@ -11,7 +11,7 @@ interface Cliente {
     numero: string;
     cidade: string;
     nmContato: string;
-    complemento: string;
-};  
+    complementoEnd: string;
+};
 
 export default Cliente;

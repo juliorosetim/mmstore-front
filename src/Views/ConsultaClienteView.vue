@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <v-responsive>
     <consulta-cliente-component />
-  </div>
+  </v-responsive>
 </template>
 
 <script Lang="ts" setup>
