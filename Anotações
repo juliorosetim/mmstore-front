@@ -9,3 +9,5 @@ vue-router -> npm install vue-router
 pinia -> npm i pinia
 
 eslint -> npm init @eslint/config@latest
+
+material design icons -> npm install @mdi/js @jamescoyle/vue-icon

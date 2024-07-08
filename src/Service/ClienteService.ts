@@ -58,9 +58,20 @@ class ClienteService{
             // response.error = this.remoteError(e);
             console.log(error.response.data.message);
         }
-
-
     }
+
+    public async findByNmCliente(nmCliente: string) : Promise<Cliente[]> {
+      const response = new Response<Cliente[]>();
+
+      try{
+          const response = await axios.get(`${url_base}/${nmCliente}?page=0&size=10`);
+
+          return response.data.content;
+      }catch (error) {
+          console.log('Erro ao buscar clientes', error);
+          throw error;
+      }
+  }
 
 }
 

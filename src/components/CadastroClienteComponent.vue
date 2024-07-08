@@ -68,6 +68,7 @@
                   @click:append-inner="pesquisaCep"
                   v-model="cliente.cep"
                   maxlength="10"
+                  @keyup.enter="pesquisaCep"
                 ></v-text-field>
               </v-col>
 
@@ -192,8 +193,6 @@
 </template>
 
 <script setup lang='ts'>
-  import Cliente from '@/types/ClienteType';
-  import { ref } from 'vue';
   import router from '@/routes';
   import axios from 'axios';
   import ClienteStore from '@/store/ClienteStore';
@@ -201,12 +200,12 @@
 
   const clienteStore = ClienteStore();
 
-  const {cliente} = clienteStore;
+  const {cliente, clearCliente} = clienteStore;
 
-  const loaded = false;
   const loading = false;
 
   const irParaConsulta = () => {
+    clearCliente();
     router.push({ name: 'ConsultaCliente' });
   }
 
@@ -224,15 +223,7 @@
   }
 
   const cadastrarCliente = () => {
-    ClienteService.cadastrarCliente(cliente);
-
-    // axios.post('http://localhost:8089/api/cliente', cliente)
-    //   .then((response) => {
-    //     console.log('Cliente cadastrado com sucesso!', response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.error('Erro ao cadastrar cliente:', error);
-    //   });
+    ClienteService.cadastrarCliente(cliente.value);
   }
 
 </script>

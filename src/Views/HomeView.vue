@@ -1,3 +1,8 @@
 <template>
-    <h1>Home</h1>
+    <home-component />
 </template>
+
+<script setup lang="ts">
+  import HomeComponent from '@/components/HomeComponent.vue'
+
+</script>

@@ -1,13 +1,19 @@
 import { defineStore } from "pinia";
 import Cliente from '@/types/ClienteType';
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import ClienteService from '@/Service/ClienteService';
 
 export const ClienteStore = defineStore("ClienteStore", () => {
 
   const clienteList = ref<Cliente[]>([]);
 
-  const cliente = ref<Cliente>({
+  const clientes = computed(() => clienteList);
+
+  // const clienteEdit = computed(() => cliente);
+
+  const cliente = computed(() => clienteLocal);
+
+  const clienteLocal = ref<Cliente> ({
     nmCliente: '',
     numero: '',
     bairro: '',
@@ -23,6 +29,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
   })
 
   const clienteClear = ref<Cliente>({
+    idCLiente: undefined,
     nmCliente: '',
     numero: '',
     bairro: '',
@@ -37,7 +44,6 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     cidade: '',
   })
 
-
   const GetClientes = async () => {
     try {
         const response = await ClienteService.findAllClientes();
@@ -48,15 +54,41 @@ export const ClienteStore = defineStore("ClienteStore", () => {
   };
 
   const SetCliente = (clientePar: Cliente) => {
-    cliente.value = clientePar;
+    clienteLocal.value = clientePar;
+  }
+
+  const GetClientesByNmCliente = async (nmCliente:string) => {
+    try {
+        const response = await ClienteService.findByNmCliente(nmCliente);
+        clienteList.value = response;
+    } catch (error) {
+        console.error("Erro ao buscar clientes: ", error);
+    }
+  };
+
+  const deleteCliente = async (idCliente: number) => {
+    try{
+      await ClienteService.deleteCliente(idCliente);
+
+      const response = await ClienteService.findAllClientes();
+      clienteList.value = response;
+
+    } catch(error) {
+      console.log('Erro ao excluir Cliente.')
+    }
+  }
+
+  const clearCliente = () => {
+    clienteLocal.value = clienteClear.value;
   }
 
   return {
     GetClientes,
-    clienteList,
     SetCliente,
     cliente,
-    clienteClear,
+    clientes,
+    GetClientesByNmCliente,
+    clearCliente,
   };
 
 });

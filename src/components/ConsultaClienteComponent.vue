@@ -8,6 +8,21 @@
                   Novo
                 </v-btn>
             </v-card>
+
+            <v-card class="ma-1 d-flex border-0 pa-2">
+              <v-text-field
+                  :loading="loading"
+                  append-inner-icon="mdi-magnify"
+                  label="Nome"
+                  hide-details
+                  @click:append-inner="pesquisar"
+                  v-model="nomePesquisa"
+                  maxlength="100"
+                  @keyup.enter="pesquisar"
+                />
+
+            </v-card>
+
             <v-card class="ma-1 d-flex border-0 pa-2">
                 <v-data-table
                     :headers="headers"
@@ -21,13 +36,14 @@
                             <td>{{ item.rua }}</td>
                             <td>{{ item.numero }}</td>
                             <td>
-                              <span class="button-grid" @click="editarCadastro(item)">
+                              <v-btn size="small" variant="plain" @click="editarCadastro(item)">
                                   <v-icon>mdi-eye</v-icon>
-                              </span>
+                              </v-btn>
                             </td>
                             <td>
-                              <span
-                                class="button-grid"
+                              <v-btn
+                                variant="plain"
+                                size="small"
                                 @click="
                                   item.idCliente !== undefined
                                     ? excluirCliente(item.idCliente)
@@ -35,7 +51,7 @@
                                 "
                               >
                                 <v-icon>mdi-delete</v-icon>
-                              </span>
+                              </v-btn>
                             </td>
 
                         </tr>
@@ -49,26 +65,38 @@
 
 <script setup lang="ts">
     import ClienteService from '@/Service/ClienteService';
-    import { defineComponent, Ref, ref, onMounted } from 'vue';
+    import {ref, onMounted } from 'vue';
     import Cliente from '@/types/ClienteType';
     import router from '@/routes/index';
     import ClienteStore from '@/store/ClienteStore';
 
-    const clientes = ref<Cliente[]>([]);
+    const nomePesquisa = ref<string>('');
+
+    const loading = ref<boolean>(false);
 
     const clienteStore = ClienteStore();
 
-    const {GetClientes, clienteList, SetCliente, clienteClear, cliente} = clienteStore;
+    const {GetClientes,
+           cliente,
+           clientes,
+           GetClientesByNmCliente,
+           deleteCliente,
+           clearCliente,
+           SetCliente
+          } = clienteStore;
 
     const headers = [
       { title: 'Nome', key: 'nmCliente' },
       { title: 'Celular', key: 'celular' },
       { title: 'Rua', key: 'rua' },
+      { title: 'Nº', key: 'numero' },
+      { title: '', key: 'editar' },
+      { title: '', key: 'excluir' },
+
     ];
 
     const fetchClientes = async () => {
       await GetClientes();
-      clientes.value = clienteList;
     }
 
     const editarCadastro = (cliente: Cliente) => {
@@ -82,7 +110,7 @@
     });
 
     const irParaNovoCadastro = () => {
-      SetCliente(clienteClear);
+      clearCliente();
       router.push({ name: 'CadastroCliente' });
     }
 
@@ -91,8 +119,18 @@
     }
 
     const excluirCliente = async(idCliente: number) => {
-      ClienteService.deleteCliente(idCliente);
-      await fetchClientes();
+      deleteCliente(idCliente);
+    }
+
+    const pesquisar = async() => {
+      if (!nomePesquisa.value == '' || !nomePesquisa.value == undefined) {
+        loading.value = true;
+        console.log(`nome pesquisa ${nomePesquisa.value}`)
+        await GetClientesByNmCliente(nomePesquisa.value);
+        loading.value = false;
+      }else{
+        await fetchClientes()
+      }
     }
 
 </script>

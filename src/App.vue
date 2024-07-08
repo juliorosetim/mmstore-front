@@ -5,7 +5,7 @@
         <v-app-bar-nav-icon
           variant="text"
           @click.stop="drawer = !drawer"
-          color="white"
+          color="black"
         ></v-app-bar-nav-icon>
 
         <v-toolbar-title>MM Store</v-toolbar-title>
@@ -28,7 +28,7 @@
       <v-navigation-drawer v-model="drawer" location="top" temporary>
         <v-list density="compact" nav>
           <v-list-item
-            prepend-icon="mdi mdi-swap-horizontal-variant"
+            prepend-icon="mdi-home"
             title="Home"
             value="home"
             :to="{ path: '/' }"
@@ -53,12 +53,11 @@
       </v-main>
     </v-layout>
   </v-card>
-
-
 </template>
 
 <script setup lang="ts">
   import { ref } from "vue";
+
 
   const drawer = ref<Boolean>(false);
 </script>
