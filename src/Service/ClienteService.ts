@@ -5,6 +5,11 @@ import { RemoteError, Response } from "./Rest";
 const url_consulta = 'http://localhost:8089/api/cliente?page=0&size=10';
 const url_base = 'http://localhost:8089/api/cliente';
 
+interface Response<T> {
+  content?: T;
+  error?: string;
+}
+
 class ClienteService{
 
     public async findAllClientes() : Promise<Cliente[]> {
@@ -21,12 +26,6 @@ class ClienteService{
         }
     }
 
-    private remoteError(error: any): RemoteError {
-      return {
-        message: error.response.data.message,
-        code: error.response.data.status,
-      } as RemoteError;
-    }
 
     public async deleteCliente(idCliente: number): any {
       await axios.delete(`${url_base}/${idCliente}`)
@@ -39,26 +38,34 @@ class ClienteService{
     }
 
 
-    public async cadastrarCliente(cliente: Cliente): any {
-      // axios.post(`${url_base}`, cliente)
-      //   .then((response) => {
-      //     console.log('Cliente cadastrado com sucesso!', response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error('Erro ao cadastrar cliente: 1', error);
-      //   });
+    // public async cadastrarCliente(cliente: Cliente): any {
+    //     const response = new Response<Cliente>();
 
-        const response = new Response<Cliente>();
+    //     try{
+    //         const response = await axios.post(`${url_base}`, cliente);
 
-        try{
-            const response = await axios.post(`${url_base}`, cliente);
+    //         return response.data.content;
+    //     }catch (error) {
+    //         // response.error = this.remoteError(e);
+    //         console.log(error.response.data.message);
+    //         return error.response.data.message
+    //     }
+    // }
 
-            return response.data.content;
-        }catch (error) {
-            // response.error = this.remoteError(e);
-            console.log(error.response.data.message);
-        }
-    }
+    public async cadastrarCliente(cliente: Cliente): Promise<Response<any>>  {
+      const response: Response<any> = {};
+      try{
+          const data = await axios.post(`${url_base}`, cliente);
+
+          console.log(`1 ${data}`)
+          response.content =  data.data.content;
+      }catch (error) {
+          console.log(`2 ${error}`)
+          response.error = error.response ? error.response.data.message : error.message;
+      }
+
+      return response;
+  }
 
     public async findByNmCliente(nmCliente: string) : Promise<Cliente[]> {
       const response = new Response<Cliente[]>();

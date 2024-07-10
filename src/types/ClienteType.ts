@@ -1,5 +1,5 @@
 interface Cliente {
-    idCliente: number;
+    idCliente: number | null;
     nmCliente: string;
     cpfCnpj: string;
     emprego: string;

@@ -27,7 +27,11 @@
                 <v-data-table
                     :headers="headers"
                     :items="clientes"
-                    :items-per-page="10"
+                    :items-per-page="pagination.itemsPerPage"
+                    :page.sync="pagination.page"
+                    :server-items-length="totalClientes"
+                    @update:page="fetchClientes"
+                    @update:items-per-page="fetchClientes"
                     >
                     <template #item="{ item }">
                         <tr>
@@ -36,29 +40,44 @@
                             <td>{{ item.rua }}</td>
                             <td>{{ item.numero }}</td>
                             <td>
-                              <v-btn size="small" variant="plain" @click="editarCadastro(item)">
-                                  <v-icon>mdi-eye</v-icon>
+                              <v-btn size="small"
+                                     variant="plain"
+                                     @click="editarCadastro(item)">
+                                <v-icon>mdi-eye</v-icon>
                               </v-btn>
                             </td>
                             <td>
                               <v-btn
                                 variant="plain"
                                 size="small"
-                                @click="
-                                  item.idCliente !== undefined
-                                    ? excluirCliente(item.idCliente)
-                                    : null
-                                "
+                                @click="item.idCliente !== undefined? excluirCliente(item.idCliente): null"
                               >
                                 <v-icon>mdi-delete</v-icon>
                               </v-btn>
                             </td>
-
                         </tr>
                     </template>
-
                 </v-data-table>
             </v-card>
+
+            <v-snackbar
+            rounded="pill"
+            :timeout="2000"
+            v-model="snackBar.show"
+            :color="snackBar.color"
+            :close-on-content-click="snackBar.closeOnClick"
+            elevation="24"
+          >
+            {{ snackBar.msg }}
+
+            <template v-slot:actions>
+              <v-btn variant="text">
+                fechar
+              </v-btn>
+            </template>
+
+          </v-snackbar>
+
         </v-container>
     </v-app>
 </template>
@@ -69,6 +88,15 @@
     import Cliente from '@/types/ClienteType';
     import router from '@/routes/index';
     import ClienteStore from '@/store/ClienteStore';
+
+    const snackBar = ref({
+      show: false,
+      msg: "",
+      backColor: "",
+      timeout: "'2000'",
+      closeOnClick: true
+    });
+
 
     const nomePesquisa = ref<string>('');
 
@@ -92,7 +120,6 @@
       { title: 'Nº', key: 'numero' },
       { title: '', key: 'editar' },
       { title: '', key: 'excluir' },
-
     ];
 
     const fetchClientes = async () => {
@@ -111,6 +138,7 @@
 
     const irParaNovoCadastro = () => {
       clearCliente();
+
       router.push({ name: 'CadastroCliente' });
     }
 
@@ -120,6 +148,11 @@
 
     const excluirCliente = async(idCliente: number) => {
       deleteCliente(idCliente);
+
+      snackBar.value.msg = "Cliente excluido com sucesso";
+      snackBar.value.color = "green";
+      snackBar.value.show = true;
+
     }
 
     const pesquisar = async() => {

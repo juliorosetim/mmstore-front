@@ -5,6 +5,13 @@ import ClienteService from '@/Service/ClienteService';
 
 export const ClienteStore = defineStore("ClienteStore", () => {
 
+  const pagination = ref({
+    page: 1,
+    itemsPerPage: 10,
+  });
+
+  const totalClientes = ref(0);
+
   const clienteList = ref<Cliente[]>([]);
 
   const clientes = computed(() => clienteList);
@@ -14,6 +21,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
   const cliente = computed(() => clienteLocal);
 
   const clienteLocal = ref<Cliente> ({
+    idCliente: null,
     nmCliente: '',
     numero: '',
     bairro: '',
@@ -29,7 +37,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
   })
 
   const clienteClear = ref<Cliente>({
-    idCLiente: undefined,
+    idCliente: null,
     nmCliente: '',
     numero: '',
     bairro: '',
@@ -43,6 +51,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     complementoEnd: '',
     cidade: '',
   })
+
 
   const GetClientes = async () => {
     try {
@@ -79,7 +88,21 @@ export const ClienteStore = defineStore("ClienteStore", () => {
   }
 
   const clearCliente = () => {
-    clienteLocal.value = clienteClear.value;
+    clienteLocal.value = {
+      idCliente: null,
+      nmCliente: '',
+      numero: '',
+      bairro: '',
+      cpfCnpj: '',
+      emprego: '',
+      celular: '',
+      contato: '',
+      nmContato: '',
+      rua: '',
+      cep: '',
+      complementoEnd: '',
+      cidade: '',
+    };
   }
 
   return {
@@ -89,6 +112,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     clientes,
     GetClientesByNmCliente,
     clearCliente,
+    deleteCliente
   };
 
 });

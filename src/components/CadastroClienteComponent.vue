@@ -14,6 +14,7 @@
                   label="Nome"
                   hide-details="auto"
                   maxlength="100"
+                  :rules="[v => !!v || 'Nome é obrigatório!', v => v.length <= 100 || 'Nome deve ter no máximo 100 caracteres']"
                 />
               </v-col>
               <v-col cols="3">
@@ -188,6 +189,25 @@
               </v-col>
             </v-row>
           </v-card>
+
+          <v-snackbar
+            rounded="pill"
+            :timeout="2000"
+            v-model="snackBar.show"
+            :color="snackBar.color"
+            :close-on-content-click="snackBar.closeOnClick"
+            elevation="24"
+          >
+            {{ snackBar.msg }}
+
+            <template v-slot:actions>
+              <v-btn variant="text">
+                fechar
+              </v-btn>
+            </template>
+
+          </v-snackbar>
+
     </v-container>
   </v-app>
 </template>
@@ -197,6 +217,15 @@
   import axios from 'axios';
   import ClienteStore from '@/store/ClienteStore';
   import ClienteService from '@/Service/ClienteService';
+  import { ref } from 'vue';
+
+  const snackBar = ref({
+    show: false,
+    msg: "",
+    backColor: "",
+    timeout: "'2000'",
+    closeOnClick: true
+  });
 
   const clienteStore = ClienteStore();
 
@@ -222,8 +251,24 @@
     });
   }
 
-  const cadastrarCliente = () => {
-    ClienteService.cadastrarCliente(cliente.value);
+  const cadastrarCliente = async () => {
+    const response = await ClienteService.cadastrarCliente(cliente.value);
+
+    if (response.content) {
+      snackBar.value.msg = "Cliente cadastrado com sucesso";
+      snackBar.value.color = "green";
+      snackBar.value.show = true;
+    } else if (response.error) {
+      snackBar.value.msg = response.error;
+      snackBar.value.color = "#d11e48";
+      snackBar.value.show = true;
+    }
+  }
+
+  const nameRule = (nmNome: string) => {
+    if (nmNome) return true;
+
+    return 'Nome é obritgaório!'
   }
 
 </script>
