@@ -222,7 +222,7 @@
   const snackBar = ref({
     show: false,
     msg: "",
-    backColor: "",
+    color: "",
     timeout: "'2000'",
     closeOnClick: true
   });

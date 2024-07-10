@@ -13,25 +13,25 @@
               <v-text-field
                   :loading="loading"
                   append-inner-icon="mdi-magnify"
-                  label="Nome"
+                  label="Nome/Cpf/Cnpj"
                   hide-details
-                  @click:append-inner="pesquisar"
+                  @click:append-inner="loadItems"
                   v-model="nomePesquisa"
                   maxlength="100"
-                  @keyup.enter="pesquisar"
+                  @keyup.enter="loadItems"
                 />
 
             </v-card>
 
             <v-card class="ma-1 d-flex border-0 pa-2">
-                <v-data-table
+
+              <VDataTableServer
+                    v-model:items-per-page="pagination.itemsPerPage"
                     :headers="headers"
                     :items="clientes"
-                    :items-per-page="pagination.itemsPerPage"
-                    :page.sync="pagination.page"
-                    :server-items-length="totalClientes"
-                    @update:page="fetchClientes"
-                    @update:items-per-page="fetchClientes"
+                    :items-length="totalElements"
+                    no-data-text="Nenhum registro encontrado."
+                    @update:options="loadItems"
                     >
                     <template #item="{ item }">
                         <tr>
@@ -57,17 +57,17 @@
                             </td>
                         </tr>
                     </template>
-                </v-data-table>
+              </VDataTableServer>
             </v-card>
 
             <v-snackbar
-            rounded="pill"
-            :timeout="2000"
-            v-model="snackBar.show"
-            :color="snackBar.color"
-            :close-on-content-click="snackBar.closeOnClick"
-            elevation="24"
-          >
+              rounded="pill"
+              :timeout="2000"
+              v-model="snackBar.show"
+              :color="snackBar.color"
+              :close-on-content-click="snackBar.closeOnClick"
+              elevation="24"
+            >
             {{ snackBar.msg }}
 
             <template v-slot:actions>
@@ -88,15 +88,20 @@
     import Cliente from '@/types/ClienteType';
     import router from '@/routes/index';
     import ClienteStore from '@/store/ClienteStore';
+    import { VDataTableServer } from 'vuetify/components/VDataTable';
 
     const snackBar = ref({
       show: false,
       msg: "",
-      backColor: "",
+      color: "",
       timeout: "'2000'",
       closeOnClick: true
     });
 
+    const pagination = ref({
+      page: 1,
+      itemsPerPage: 10,
+    });
 
     const nomePesquisa = ref<string>('');
 
@@ -110,7 +115,9 @@
            GetClientesByNmCliente,
            deleteCliente,
            clearCliente,
-           SetCliente
+           SetCliente,
+           totalElements,
+           totalPages
           } = clienteStore;
 
     const headers = [
@@ -123,7 +130,7 @@
     ];
 
     const fetchClientes = async () => {
-      await GetClientes();
+      await GetClientes(pagination.value.page, pagination.value.itemsPerPage);
     }
 
     const editarCadastro = (cliente: Cliente) => {
@@ -147,21 +154,35 @@
     }
 
     const excluirCliente = async(idCliente: number) => {
-      deleteCliente(idCliente);
+      await deleteCliente(idCliente);
+
+      await loadItems;
 
       snackBar.value.msg = "Cliente excluido com sucesso";
       snackBar.value.color = "green";
       snackBar.value.show = true;
-
     }
 
-    const pesquisar = async() => {
+    const clearPagination = () => {
+      pagination.value.page = 1;
+      pagination.value.itemsPerPage = 10;
+    }
+
+    const loadItems = async (options: any) => {
+      clearPagination();
+
       if (!nomePesquisa.value == '' || !nomePesquisa.value == undefined) {
         loading.value = true;
-        console.log(`nome pesquisa ${nomePesquisa.value}`)
-        await GetClientesByNmCliente(nomePesquisa.value);
+
+        await GetClientesByNmCliente(nomePesquisa.value, pagination.value.page, pagination.value.itemsPerPage);
+
         loading.value = false;
-      }else{
+      } else{
+        if(options.page !== undefined && options.itemsPerPage !== undefined) {
+          pagination.value.page = options.page;
+          pagination.value.itemsPerPage = options.itemsPerPage;
+        }
+
         await fetchClientes()
       }
     }

@@ -10,7 +10,14 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     itemsPerPage: 10,
   });
 
-  const totalClientes = ref(0);
+  const totalElementsLocal = ref(0);
+
+  const totalElements = computed(() => totalElementsLocal)
+
+  const totalPagesLocal = ref(0);
+
+  const totalPages = computed(() => totalPagesLocal)
+
 
   const clienteList = ref<Cliente[]>([]);
 
@@ -53,10 +60,13 @@ export const ClienteStore = defineStore("ClienteStore", () => {
   })
 
 
-  const GetClientes = async () => {
+  const GetClientes = async (page: number, itemsPerPage: number) => {
     try {
-        const response = await ClienteService.findAllClientes();
-        clienteList.value = response;
+        const response = await ClienteService.findAllClientes(page, itemsPerPage);
+
+        clienteList.value = response.content;
+        totalElementsLocal.value = response.totalElements;
+        totalPagesLocal.value = response.totalPages;
     } catch (error) {
         console.error("Erro ao buscar clientes: ", error);
     }
@@ -66,9 +76,10 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     clienteLocal.value = clientePar;
   }
 
-  const GetClientesByNmCliente = async (nmCliente:string) => {
+  const GetClientesByNmCliente = async (nmCliente:string, page: number, itemsPerPage: number) => {
     try {
-        const response = await ClienteService.findByNmCliente(nmCliente);
+        const response = await ClienteService.findByNmCliente(nmCliente, pagination.value.page,
+                                                              pagination.value.itemsPerPage );
         clienteList.value = response;
     } catch (error) {
         console.error("Erro ao buscar clientes: ", error);
@@ -79,7 +90,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     try{
       await ClienteService.deleteCliente(idCliente);
 
-      const response = await ClienteService.findAllClientes();
+      const response = await ClienteService.findAllClientes(1, 10);
       clienteList.value = response;
 
     } catch(error) {
@@ -112,7 +123,9 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     clientes,
     GetClientesByNmCliente,
     clearCliente,
-    deleteCliente
+    deleteCliente,
+    totalElements,
+    totalPages,
   };
 
 });

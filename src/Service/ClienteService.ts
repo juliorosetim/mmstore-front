@@ -1,56 +1,56 @@
 import Cliente from '@/types/ClienteType';
 import axios from "axios";
-import { RemoteError, Response } from "./Rest";
+import { Response } from "./Rest";
 
-const url_consulta = 'http://localhost:8089/api/cliente?page=0&size=10';
+
+//const url_consulta = 'http://localhost:8089/api/cliente?page=0&size=10';
+//const url_consulta = 'http://localhost:8089/api/cliente?page=0&size=10';
 const url_base = 'http://localhost:8089/api/cliente';
 
 interface Response<T> {
   content?: T;
   error?: string;
+  totalElements?: number;
+  totalPages?: number;
 }
 
 class ClienteService{
 
-    public async findAllClientes() : Promise<Cliente[]> {
-        const response = new Response<Cliente[]>();
+    public async findAllClientes(page: number, itemsPerPage: number) : Promise<Response<any>> {
+      const response: Response<any> = {};
 
-        try{
-            const response = await axios.get(url_consulta);
+      try{
+          const data = await axios.get(`${url_base}?page=${page-1}&size=${itemsPerPage}`);
 
-            return response.data.content;
-        }catch (error) {
-            // response.error = this.remoteError(e);
-            console.log('Erro ao buscar clientes', error);
-            throw error;
-        }
+          response.content = data.data.content;
+          response.totalElements = data.data.totalElements;
+          response.totalPages = data.data.totalPages;
+
+          return response;
+      }catch (error) {
+          // response.error = this.remoteError(e);
+          console.log('Erro ao buscar clientes', error);
+          response.error = response.error = error.response ? error.response.data.message : error.message;
+      }
+
+      return response;
+  }
+
+
+    public async deleteCliente(idCliente: number): Promise<Response<any>>  {
+      const response: Response<any> = {};
+
+      try{
+        const data = await axios.delete(`${url_base}/${idCliente}`)
+
+        response.content = data.data.content;
+
+      }catch(error){
+        response.error = response.error = error.response ? error.response.data.message : error.message;
+      }
+
+      return response;
     }
-
-
-    public async deleteCliente(idCliente: number): any {
-      await axios.delete(`${url_base}/${idCliente}`)
-      .then(() => {
-        console.log('Registro excluido com sucesso!')
-      })
-      .catch((error) => {
-        console.log(`Erro ao excluir registro ${error}`)
-      })
-    }
-
-
-    // public async cadastrarCliente(cliente: Cliente): any {
-    //     const response = new Response<Cliente>();
-
-    //     try{
-    //         const response = await axios.post(`${url_base}`, cliente);
-
-    //         return response.data.content;
-    //     }catch (error) {
-    //         // response.error = this.remoteError(e);
-    //         console.log(error.response.data.message);
-    //         return error.response.data.message
-    //     }
-    // }
 
     public async cadastrarCliente(cliente: Cliente): Promise<Response<any>>  {
       const response: Response<any> = {};
@@ -67,11 +67,11 @@ class ClienteService{
       return response;
   }
 
-    public async findByNmCliente(nmCliente: string) : Promise<Cliente[]> {
+    public async findByNmCliente(nmCliente: string, page: number, itemsPerPage: number) : Promise<Cliente[]> {
       const response = new Response<Cliente[]>();
 
       try{
-          const response = await axios.get(`${url_base}/${nmCliente}?page=0&size=10`);
+          const response = await axios.get(`${url_base}/${nmCliente}?page=${page-1}&size=${itemsPerPage}`);
 
           return response.data.content;
       }catch (error) {
