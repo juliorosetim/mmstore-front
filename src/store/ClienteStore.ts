@@ -18,12 +18,9 @@ export const ClienteStore = defineStore("ClienteStore", () => {
 
   const totalPages = computed(() => totalPagesLocal)
 
-
   const clienteList = ref<Cliente[]>([]);
 
   const clientes = computed(() => clienteList);
-
-  // const clienteEdit = computed(() => cliente);
 
   const cliente = computed(() => clienteLocal);
 
@@ -59,7 +56,6 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     cidade: '',
   })
 
-
   const GetClientes = async (page: number, itemsPerPage: number) => {
     try {
         const response = await ClienteService.findAllClientes(page, itemsPerPage);
@@ -86,12 +82,24 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     }
   };
 
+  // const cadastrarCliente = async () => {
+  //   try{
+  //       console.log(`cadastrarCliente store ${cliente.value}`)
+  //       const response = await ClienteService.cadastrarCliente(cliente.value);
+
+  //       clienteLocal.value =  response.content;
+  //   }catch (error: any) {
+  //     console.log('Erro ao cadastrar Cliente');
+  //   }
+  // }
+
   const deleteCliente = async (idCliente: number) => {
     try{
-      await ClienteService.deleteCliente(idCliente);
+        const response = await ClienteService.deleteCliente(idCliente);
 
-      const response = await ClienteService.findAllClientes(1, 10);
-      clienteList.value = response;
+        clienteList.value = response.content;
+        totalElementsLocal.value = response.totalElements;
+        totalPagesLocal.value = response.totalPages;
 
     } catch(error) {
       console.log('Erro ao excluir Cliente.')
@@ -125,7 +133,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     clearCliente,
     deleteCliente,
     totalElements,
-    totalPages,
+    totalPages
   };
 
 });

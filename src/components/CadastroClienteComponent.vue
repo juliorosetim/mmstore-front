@@ -1,215 +1,215 @@
 <template>
-  <v-app>
-    <v-container>
-          <v-card prepend-icon="mdi-account"
-                  title="Cadastro de Cliente" class="pa-2">
-            <v-row dense>
-              <v-col cols="9">
-                <v-text-field
-                  type="text"
-                  id="nmCliente"
-                  v-model="cliente.nmCliente"
-                  required
-                  class="input"
-                  label="Nome"
-                  hide-details="auto"
-                  maxlength="100"
-                  :rules="[v => !!v || 'Nome é obrigatório!', v => v.length <= 100 || 'Nome deve ter no máximo 100 caracteres']"
-                />
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  type="text"
-                  id="cpfCnpj"
-                  v-model="cliente.cpfCnpj"
-                  required
-                  class="input"
-                  label="CPF/CNPJ"
-                  hide-details="auto"
-                  maxlength="14"
-                />
-              </v-col>
-            </v-row>
-
-            <v-row dense>
-                <v-col cols="6">
+  <v-responsive>
+    <v-app>
+      <v-container>
+            <v-card prepend-icon="mdi-account"
+                    title="Cadastro de Cliente" class="pa-2">
+              <v-row dense>
+                <v-col cols="9">
                   <v-text-field
                     type="text"
-                    id="celular"
-                    v-model="cliente.celular"
+                    id="nmCliente"
+                    v-model="cliente.nmCliente"
                     required
                     class="input"
-                    label="Celular"
-                    hide-details="auto"
-                    maxlength="11"
-                  />
-                </v-col>
-
-                <v-col cols="6">
-                  <v-text-field
-                    type="text"
-                    id="emprego"
-                    v-model="cliente.emprego"
-                    required
-                    class="input"
-                    label="Emprego"
+                    label="Nome"
                     hide-details="auto"
                     maxlength="100"
                   />
                 </v-col>
-            </v-row>
+                <v-col cols="3">
+                  <v-text-field
+                    type="text"
+                    id="cpfCnpj"
+                    v-model="cliente.cpfCnpj"
+                    required
+                    class="input"
+                    label="CPF/CNPJ"
+                    hide-details="auto"
+                    maxlength="14"
+                  />
+                </v-col>
+              </v-row>
 
-            <v-row dense>
-              <v-col cols="3">
-                <v-text-field
-                  :loading="loading"
-                  append-inner-icon="mdi-magnify"
-                  label="CEP"
-                  hide-details
-                  @click:append-inner="pesquisaCep"
-                  v-model="cliente.cep"
-                  maxlength="10"
-                  @keyup.enter="pesquisaCep"
-                ></v-text-field>
-              </v-col>
+              <v-row dense>
+                  <v-col cols="6">
+                    <v-text-field
+                      type="text"
+                      id="celular"
+                      v-model="cliente.celular"
+                      required
+                      class="input"
+                      label="Celular"
+                      hide-details="auto"
+                      maxlength="11"
+                    />
+                  </v-col>
 
-              <v-col cols="7">
-                <v-text-field
-                  type="text"
-                  id="endereco"
-                  v-model="cliente.rua"
-                  required
-                  class="input"
-                  label="Endereço"
-                  hide-details="auto"
-                  maxlength="100"
-                />
-              </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      type="text"
+                      id="emprego"
+                      v-model="cliente.emprego"
+                      required
+                      class="input"
+                      label="Emprego"
+                      hide-details="auto"
+                      maxlength="100"
+                    />
+                  </v-col>
+              </v-row>
 
-              <v-col  cols="2">
-                <v-text-field
-                  type="text"
-                  id="numero"
-                  v-model="cliente.numero"
-                  required
-                  class="input"
-                  label="Número"
-                  hide-details="auto"
-                  maxlength="10"
-                />
-              </v-col>
-            </v-row>
+              <v-row dense>
+                <v-col cols="3">
+                  <v-text-field
+                    :loading="loading"
+                    append-inner-icon="mdi-magnify"
+                    label="CEP"
+                    hide-details
+                    @click:append-inner="pesquisaCep"
+                    v-model="cliente.cep"
+                    maxlength="10"
+                    @keyup.enter="pesquisaCep"
+                  ></v-text-field>
+                </v-col>
 
-            <v-row dense>
-              <v-col cols="12">
-                <v-text-field
-                  type="text"
-                  id="bairoo"
-                  v-model="cliente.bairro"
-                  required
-                  class="input"
-                  label="Bairro"
-                  hide-details="auto"
-                  maxlength="100"
-                />
-              </v-col>
-            </v-row>
+                <v-col cols="7">
+                  <v-text-field
+                    type="text"
+                    id="endereco"
+                    v-model="cliente.rua"
+                    required
+                    class="input"
+                    label="Endereço"
+                    hide-details="auto"
+                    maxlength="100"
+                  />
+                </v-col>
 
-            <v-row dense>
-              <v-col cols="12">
-                <v-text-field
-                  type="text"
-                  id="cidade"
-                  v-model="cliente.cidade"
-                  required
-                  class="input"
-                  label="Cidade"
-                  hide-details="auto"
-                  maxlength="100"
-                />
-              </v-col>
-            </v-row>
+                <v-col  cols="2">
+                  <v-text-field
+                    type="text"
+                    id="numero"
+                    v-model="cliente.numero"
+                    required
+                    class="input"
+                    label="Número"
+                    hide-details="auto"
+                    maxlength="10"
+                  />
+                </v-col>
+              </v-row>
 
-            <v-row dense>
-              <v-col cols="12">
-                <v-text-field
-                  type="text"
-                  id="complementoEnd"
-                  v-model="cliente.complementoEnd"
-                  required
-                  class="input"
-                  label="Complemento"
-                  hide-details="auto"
-                  maxlength="100"
-                />
-              </v-col>
-            </v-row>
+              <v-row dense>
+                <v-col cols="12">
+                  <v-text-field
+                    type="text"
+                    id="bairoo"
+                    v-model="cliente.bairro"
+                    required
+                    class="input"
+                    label="Bairro"
+                    hide-details="auto"
+                    maxlength="100"
+                  />
+                </v-col>
+              </v-row>
 
-            <v-row dense>
-              <v-col cols="8">
-                <v-text-field
-                  type="text"
-                  id="nmContato"
-                  v-model="cliente.nmContato"
-                  required
-                  class="input"
-                  label="Cotato"
-                  hide-details="auto"
-                  maxlength="100"
-                />
-              </v-col>
+              <v-row dense>
+                <v-col cols="12">
+                  <v-text-field
+                    type="text"
+                    id="cidade"
+                    v-model="cliente.cidade"
+                    required
+                    class="input"
+                    label="Cidade"
+                    hide-details="auto"
+                    maxlength="100"
+                  />
+                </v-col>
+              </v-row>
 
-              <v-col cols="4">
-                <v-text-field
-                  type="text"
-                  id="contato"
-                  v-model="cliente.contato"
-                  required
-                  class="input"
-                  label="Telefone"
-                  hide-details="auto"
-                  maxlength="11"
-                />
-              </v-col>
-            </v-row>
+              <v-row dense>
+                <v-col cols="12">
+                  <v-text-field
+                    type="text"
+                    id="complementoEnd"
+                    v-model="cliente.complementoEnd"
+                    required
+                    class="input"
+                    label="Complemento"
+                    hide-details="auto"
+                    maxlength="100"
+                  />
+                </v-col>
+              </v-row>
 
-            <v-row dense justify="center">
-              <v-col cols="2">
-                <v-btn
-                  @click="cadastrarCliente"
-                  >
-                    Salvar
-                </v-btn>
-              </v-col>
-              <v-col cols="2">
-                <v-btn
-                  @click="irParaConsulta">
-                    Voltar
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
+              <v-row dense>
+                <v-col cols="8">
+                  <v-text-field
+                    type="text"
+                    id="nmContato"
+                    v-model="cliente.nmContato"
+                    required
+                    class="input"
+                    label="Cotato"
+                    hide-details="auto"
+                    maxlength="100"
+                  />
+                </v-col>
 
-          <v-snackbar
+                <v-col cols="4">
+                  <v-text-field
+                    type="text"
+                    id="contato"
+                    v-model="cliente.contato"
+                    required
+                    class="input"
+                    label="Telefone"
+                    hide-details="auto"
+                    maxlength="11"
+                  />
+                </v-col>
+              </v-row>
+
+              <v-row dense justify="center">
+                <v-col cols="2">
+                  <v-btn
+                    @click="cadastrarCliente"
+                    >
+                      Salvar
+                  </v-btn>
+                </v-col>
+                <v-col cols="2">
+                  <v-btn
+                    @click="irParaConsulta">
+                      Voltar
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card>
+
+            <v-snackbar
             rounded="pill"
             :timeout="2000"
             v-model="snackBar.show"
             :color="snackBar.color"
-            :close-on-content-click="snackBar.closeOnClick"
-            elevation="24"
-          >
-            {{ snackBar.msg }}
+            close-on-content-click="true"
+            >
+              {{ snackBar.msg }}
 
-            <template v-slot:actions>
-              <v-btn variant="text">
-                fechar
-              </v-btn>
-            </template>
+              <template v-slot:actions>
+                <v-btn variant="text">
+                  fechar
+                </v-btn>
+              </template>
 
-          </v-snackbar>
+            </v-snackbar>
 
-    </v-container>
-  </v-app>
+      </v-container>
+    </v-app>
+  </v-responsive>
 </template>
 
 <script setup lang='ts'>
@@ -254,21 +254,34 @@
   const cadastrarCliente = async () => {
     const response = await ClienteService.cadastrarCliente(cliente.value);
 
-    if (response.content) {
+    console.log(`hasError? ${response.hasError}`)
+    if (response.hasError) {
+      snackBar.value.msg = response.error?.message;
+      snackBar.value.color = "#d11e48";
+      snackBar.value.show = true;
+    } else {
+      console.log(' teste 1')
       snackBar.value.msg = "Cliente cadastrado com sucesso";
       snackBar.value.color = "green";
-      snackBar.value.show = true;
-    } else if (response.error) {
-      snackBar.value.msg = response.error;
-      snackBar.value.color = "#d11e48";
       snackBar.value.show = true;
     }
   }
 
-  const nameRule = (nmNome: string) => {
-    if (nmNome) return true;
+  // const cadCliente = async () => {
+  //   const response = await cadastrarCliente();
 
-    return 'Nome é obritgaório!'
-  }
+  //   console.log(`response response ${response}`)
+  //   console.log(`hasError? ${response.hasError}`)
+  //   if (response.hasError) {
+  //     snackBar.value.msg = response.error?.message;
+  //     snackBar.value.color = "#d11e48";
+  //     snackBar.value.show = true;
+  //   } else {
+  //     console.log(' teste 1')
+  //     snackBar.value.msg = "Cliente cadastrado com sucesso";
+  //     snackBar.value.color = "green";
+  //     snackBar.value.show = true;
+  //   }
+  // }
 
 </script>

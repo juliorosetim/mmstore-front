@@ -109,6 +109,8 @@
 
     const clienteStore = ClienteStore();
 
+    const deletando = ref<boolean>(false);
+
     const {GetClientes,
            cliente,
            clientes,
@@ -135,7 +137,6 @@
 
     const editarCadastro = (cliente: Cliente) => {
       SetCliente(cliente);
-      console.log('editando', cliente)
       irParaEdicaoDeCadastro();
     }
 
@@ -154,9 +155,9 @@
     }
 
     const excluirCliente = async(idCliente: number) => {
-      await deleteCliente(idCliente);
+      deletando.value = true;
 
-      await loadItems;
+      await deleteCliente(idCliente);
 
       snackBar.value.msg = "Cliente excluido com sucesso";
       snackBar.value.color = "green";
@@ -171,7 +172,12 @@
     const loadItems = async (options: any) => {
       clearPagination();
 
-      if (!nomePesquisa.value == '' || !nomePesquisa.value == undefined) {
+      if (deletando.value) {
+        console.log('aqui')
+        await fetchClientes();
+
+        deletando.value = false;
+      }else if (!nomePesquisa.value == '' || !nomePesquisa.value == undefined) {
         loading.value = true;
 
         await GetClientesByNmCliente(nomePesquisa.value, pagination.value.page, pagination.value.itemsPerPage);
