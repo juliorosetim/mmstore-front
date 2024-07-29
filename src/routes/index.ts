@@ -6,23 +6,28 @@ import {createMemoryHistory, createRouter} from 'vue-router';
 
 const routes = [
     {
-      path: '/', 
+      path: '/',
       name: "home",
       component: () => import('@/Views/HomeView.vue')
     },
     {
-      path: '/consulta-cliente', 
+      path: '/consulta-cliente',
       name: 'ConsultaCliente',
       component: () => import('@/Views/ConsultaClienteView.vue')
     },
     {
+      path: '/consulta-vestido',
+      name: 'ConsultaVestido',
+      component: () => import('@/Views/ConsultaVestidoView.vue')
+    },
+    {
       path: '/sobre',
-      name: 'sobre', 
+      name: 'sobre',
       component: () => import('@/Views/SobreView.vue')
     },
     {
       path: '/cadastro-cliente',
-      name: "CadastroCliente", 
+      name: "CadastroCliente",
       component: () => import('@/Views/CadastroClienteView')
     }
 ]

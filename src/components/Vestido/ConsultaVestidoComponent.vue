@@ -1,16 +1,16 @@
 <template>
-    <v-app>
-        <v-container>
-            <v-card  class="pa-1" >
-                <v-btn
-                  prepend-icon="mdi-account-plus"
-                  @click="irParaNovoCadastro"
-                >
-                  Novo
-                </v-btn>
-            </v-card>
+  <v-app>
+      <v-container>
+          <v-card  class="pa-1" >
+              <v-btn
+                prepend-icon="mdi-account-plus"
 
-            <v-card class="ma-1 d-flex border-0 pa-2">
+              >
+                Novo
+              </v-btn>
+          </v-card>
+
+          <v-card class="ma-1 d-flex border-0 pa-2">
               <v-text-field
                   :loading="loading"
                   append-inner-icon="mdi-magnify"
@@ -29,21 +29,21 @@
               <VDataTableServer
                     v-model:items-per-page="pagination.itemsPerPage"
                     :headers="headers"
-                    :items="clientes"
+                    :items="vestidos"
                     :items-length="totalElements"
                     no-data-text="Nenhum registro encontrado."
                     @update:options="loadItems"
                     >
                     <template #item="{ item }">
                         <tr>
-                            <td>{{ item.nmCliente }}</td>
-                            <td>{{ item.celular }}</td>
-                            <td>{{ item.rua }}</td>
-                            <td>{{ item.numero }}</td>
+                            <td>{{ item.imgVestido }}</td>
+                            <td>{{ item.nuVestido }}</td>
+                            <td>{{ item.vlrVestido }}</td>
+                            <td>{{ item.flSituacao }}</td>
                             <td>
                               <v-btn size="small"
-                                     variant="plain"
-                                     @click="editarCadastro(item)">
+                                    variant="plain"
+                                    @click="editarCadastro(item)">
                                 <v-icon>mdi-eye</v-icon>
                               </v-btn>
                             </td>
@@ -81,17 +81,33 @@
 
           </v-snackbar>
 
-        </v-container>
-    </v-app>
+
+      </v-container>
+  </v-app>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
     import {ref, onMounted } from 'vue';
-    import Cliente from '@/types/ClienteType';
     import router from '@/routes/index';
-    import ClienteStore from '@/store/ClienteStore';
     import { VDataTableServer } from 'vuetify/components/VDataTable';
+    import { VestidoStore } from '@/store/VestidoStore';
+    import Vestido from '@/types/VestidoType';
 
+    const deletando = ref<boolean>(false);
+    const loading = ref<boolean>(false);
+    const nomePesquisa = ref<string>('');
+
+    const vestidoStore = VestidoStore();
+
+    const { vestidos,
+            GetAllVestidos,
+            totalElements,
+            totalPages} = vestidoStore;
+
+    const pagination = ref({
+      page: 1,
+      itemsPerPage: 10,
+    });
 
     const snackBar = ref({
       show: false,
@@ -101,71 +117,27 @@
       closeOnClick: true
     });
 
-    const pagination = ref({
-      page: 1,
-      itemsPerPage: 10,
-    });
-
-    const nomePesquisa = ref<string>('');
-
-    const loading = ref<boolean>(false);
-
-    const clienteStore = ClienteStore();
-
-    const deletando = ref<boolean>(false);
-
-    const {GetClientes,
-           cliente,
-           clientes,
-           GetClientesByNmCliente,
-           deleteCliente,
-           clearCliente,
-           SetCliente,
-           totalElements,
-           totalPages
-          } = clienteStore;
-
     const headers = [
-      { title: 'Nome', key: 'nmCliente' },
-      { title: 'Celular', key: 'celular' },
-      { title: 'Rua', key: 'rua' },
-      { title: 'Nº', key: 'numero' },
+      { title: 'Foto', key: 'imgVestido' },
+      { title: 'Nº', key: 'nuVestido' },
+      { title: 'Valor R$', key: 'vlrVestido' },
+      { title: 'Siutação', key: 'flSituacao' },
       { title: '', key: 'editar' },
-      // { title: '', key: 'excluir' },
     ];
 
-    const fetchClientes = async () => {
-      await GetClientes(pagination.value.page, pagination.value.itemsPerPage);
+    const editarCadastro = ( vestido: Vestido ) => {
+      console.log(vestido)
     }
 
-    const editarCadastro = (cliente: Cliente) => {
-      SetCliente(cliente);
-      irParaEdicaoDeCadastro();
+
+    const fetchVestidos = async () => {
+      await GetAllVestidos(pagination.value.page, pagination.value.itemsPerPage);
     }
+
 
     onMounted( async () => {
-        await fetchClientes();
+        await fetchVestidos();
     });
-
-    const irParaNovoCadastro = () => {
-      clearCliente();
-
-      router.push({ name: 'CadastroCliente' });
-    }
-
-    const irParaEdicaoDeCadastro = () => {
-      router.push({ name: 'CadastroCliente' });
-    }
-
-    const excluirCliente = async(idCliente: number) => {
-      deletando.value = true;
-
-      await deleteCliente(idCliente);
-
-      snackBar.value.msg = "Cliente excluido com sucesso";
-      snackBar.value.color = "green";
-      snackBar.value.show = true;
-    }
 
     const clearPagination = () => {
       pagination.value.page = 1;
@@ -177,7 +149,7 @@
 
       if (deletando.value) {
         console.log('aqui')
-        await fetchClientes();
+        await fetchVestidos();
 
         deletando.value = false;
       }else if (!nomePesquisa.value == '' || !nomePesquisa.value == undefined) {

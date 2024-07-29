@@ -38,6 +38,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     cep: '',
     complementoEnd: '',
     cidade: '',
+    flAtivo: '',
   })
 
   const clienteClear = ref<Cliente>({
@@ -54,6 +55,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     cep: '',
     complementoEnd: '',
     cidade: '',
+    flAtivo: '',
   })
 
   const GetClientes = async (page: number, itemsPerPage: number) => {
@@ -121,6 +123,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
       cep: '',
       complementoEnd: '',
       cidade: '',
+      flAtivo: '',
     };
   }
 

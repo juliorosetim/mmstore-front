@@ -1,5 +1,9 @@
 Node 20.15.0
 
+Yarn
+    npm install -g yarn
+
+
 Vuetify
 
 axios -> npm install --save axios vue-axios

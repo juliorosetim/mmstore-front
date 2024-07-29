@@ -172,18 +172,32 @@
                   />
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col cols="4">
+                  <v-checkbox
+                    label="Ativo"
+                    true-value="S"
+                    false-value="N"
+                    v-model="cliente.flAtivo"
+                  >
+                  </v-checkbox>
+                </v-col>
+              </v-row>
 
               <v-row dense justify="center">
                 <v-col cols="2">
                   <v-btn
                     @click="cadastrarCliente"
+                    prepend-icon="mdi-content-save-all"
                     >
                       Salvar
                   </v-btn>
                 </v-col>
                 <v-col cols="2">
                   <v-btn
-                    @click="irParaConsulta">
+                    @click="irParaConsulta"
+                    prepend-icon="mdi-arrow-left"
+                    >
                       Voltar
                   </v-btn>
                 </v-col>
@@ -217,7 +231,7 @@
   import axios from 'axios';
   import ClienteStore from '@/store/ClienteStore';
   import ClienteService from '@/Service/ClienteService';
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
 
   const snackBar = ref({
     show: false,
@@ -267,21 +281,8 @@
     }
   }
 
-  // const cadCliente = async () => {
-  //   const response = await cadastrarCliente();
-
-  //   console.log(`response response ${response}`)
-  //   console.log(`hasError? ${response.hasError}`)
-  //   if (response.hasError) {
-  //     snackBar.value.msg = response.error?.message;
-  //     snackBar.value.color = "#d11e48";
-  //     snackBar.value.show = true;
-  //   } else {
-  //     console.log(' teste 1')
-  //     snackBar.value.msg = "Cliente cadastrado com sucesso";
-  //     snackBar.value.color = "green";
-  //     snackBar.value.show = true;
-  //   }
-  // }
+  const isAtivo = ():boolean => {
+    return cliente.value.flAtivo === 'S' ? true : false;
+  }
 
 </script>

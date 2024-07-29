@@ -12,6 +12,7 @@ interface Cliente {
     cidade: string;
     nmContato: string;
     complementoEnd: string;
+    flAtivo: string;
 };
 
 export default Cliente;
