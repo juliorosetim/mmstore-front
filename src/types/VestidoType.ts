@@ -1,6 +1,6 @@
 interface Vestido {
   idVestido: number | null;
-  nuVetiso: string;
+  nuVestido: string;
   vlrVestido: number;
   flSituacao: string;
   imgVestido: string;

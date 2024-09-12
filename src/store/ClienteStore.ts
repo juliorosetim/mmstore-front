@@ -11,19 +11,15 @@ export const ClienteStore = defineStore("ClienteStore", () => {
   });
 
   const totalElementsLocal = ref(0);
-
   const totalElements = computed(() => totalElementsLocal)
 
   const totalPagesLocal = ref(0);
-
   const totalPages = computed(() => totalPagesLocal)
 
   const clienteList = ref<Cliente[]>([]);
-
   const clientes = computed(() => clienteList);
 
   const cliente = computed(() => clienteLocal);
-
   const clienteLocal = ref<Cliente> ({
     idCliente: null,
     nmCliente: '',

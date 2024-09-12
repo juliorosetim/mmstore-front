@@ -11,11 +11,6 @@ export const VestidoStore = defineStore("VestidoStore" , () => {
     itemsPerPage: 10,
   });
 
-
-  // const vestidoLocal = ref<Vestido>({
-
-  // })
-
   const totalElementsLocal = ref(0);
   const totalElements = computed(() => totalElementsLocal);
 
@@ -23,8 +18,18 @@ export const VestidoStore = defineStore("VestidoStore" , () => {
   const totalPagesLocal = ref(0);
   const totalPages = computed(() => totalElementsLocal);
 
-  const vestidos = ref(() => vestidoList);
   const vestidoList = ref<Vestido[]>([]);
+  const vestidos = computed(() => vestidoList);
+
+  const vestido = computed(() => vestidoLocal);
+
+  const vestidoLocal = ref<Vestido>({
+    idVestido: null,
+    flSituacao: '',
+    imgVestido: '',
+    nuVetiso: '',
+    vlrVestido: 0,
+  })
 
 
   const GetAllVestidos = async (page: number, itemsPerPage: number) => {
@@ -35,12 +40,13 @@ export const VestidoStore = defineStore("VestidoStore" , () => {
         totalElementsLocal.value = response.totalElements;
         totalPagesLocal.value = response.totalPages;
     } catch (error) {
-        console.error("Erro ao buscar clientes: ", error);
+        console.error("Erro ao buscar vestidos: ", error);
     }
   };
 
   return {
     vestidos,
+    vestido,
     GetAllVestidos,
     totalElements,
     totalPages
