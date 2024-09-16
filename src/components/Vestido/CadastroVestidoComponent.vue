@@ -1,0 +1,160 @@
+<template>
+  <v-responsive>
+    <v-app>
+      <v-container>
+        <v-card prepend-icon="" title="Cadastro de vestidos" ></v-card>
+
+        <v-card class="mt-2 pl-2">
+          <v-row class="pt-2 pb-2">
+            <v-col cols="3">
+              <v-file-input
+                label="Imagem do Vestido"
+                prepend-icon="mdi-camera"
+                accept="image/*"
+                @change="onFileChange"
+                style="display: none;"
+                ref="fileInput"
+              ></v-file-input>
+              <div
+                class="image-upload"
+                @click="triggerFileInput"
+                :style="{ backgroundImage: imageUrl ? `url(${imageUrl})` : '' }"
+              >
+                <v-icon v-if="!imageUrl">mdi-plus</v-icon>
+              </div>
+            </v-col>
+
+            <v-col cols="3">
+              <v-text-field
+                type="text"
+                id="nuVestido"
+                v-model="vestido.nuVestido"
+                required
+                class="input"
+                label="Nº Vestido"
+                hide-details="auto"
+                maxlength="100"
+              />
+            </v-col>
+
+            <v-col cols="3">
+              <v-text-field
+                type="text"
+                id="vlrVestido"
+                v-model="vestido.vlrVestido"
+                required
+                class="input"
+                label="R$ Valor"
+                hide-details="auto"
+                maxlength="14"
+              />
+            </v-col>
+
+            <v-col cols="2">
+              <v-checkbox
+                label="Ativo"
+                true-value="S"
+                false-value="N"
+                v-model="vestido.flSituacao"
+              >
+              </v-checkbox>
+            </v-col>
+          </v-row>
+        </v-card>
+
+        <v-card class="mt-4 pa-2">
+          <v-row dense justify="center">
+            <v-col cols="2">
+              <v-btn
+                @click="cadastrarVestido"
+                prepend-icon="mdi-content-save-all"
+                >
+                  Salvar
+              </v-btn>
+            </v-col>
+            <v-col cols="2">
+              <v-btn
+                @click="irParaConsulta"
+                prepend-icon="mdi-arrow-left"
+                >
+                  Voltar
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+
+
+      </v-container>
+    </v-app>
+  </v-responsive>
+</template>
+
+<script setup lang='ts'>
+import { ref } from 'vue';
+import VestidoStore from '@/store/VestidoStore';
+import VestidoService from '@/Service/VestidoService';
+import router from '@/routes';
+
+const vestidoStore = VestidoStore();
+
+const {vestido} = vestidoStore;
+
+const imageUrl = ref<string | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
+
+const onFileChange = (event: Event) => {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imageUrl.value = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+const triggerFileInput = () => {
+  fileInput.value?.click();
+};
+
+const cadastrarVestido = async () => {
+  const file = fileInput.value?.files?.[0];
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64String = reader.result?.toString().replace('data:', '').replace(/^.+,/, '');
+      vestido.value.imgVestido = { idImgVestido: null, imgVestido: base64String };
+
+      const response = await VestidoService.cadastrarVestido(vestido.value);
+      console.log(`HasErro ${response.hasError}`);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    vestido.value.imgVestido = { idImgVestido: null, imgVestido: null };
+
+    const response = await VestidoService.cadastrarVestido(vestido.value);
+    console.log(`HasErro ${response.hasError}`);
+  }
+};
+
+const irParaConsulta = () => {
+    //clearCliente();
+  router.push({ name: 'ConsultaVestido' });
+}
+
+</script>
+
+<style scoped>
+.image-upload {
+  width: 200px;
+  height: 200px;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+}
+</style>

@@ -28,7 +28,12 @@ const routes = [
     {
       path: '/cadastro-cliente',
       name: "CadastroCliente",
-      component: () => import('@/Views/CadastroClienteView')
+      component: () => import('@/Views/CadastroClienteView.vue')
+    },
+    {
+      path: '/cadastro-vestido',
+      name: "CadastroVestido",
+      component: () => import('@/Views/CadastroVestidoView.vue')
     }
 ]
 

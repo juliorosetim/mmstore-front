@@ -35,7 +35,58 @@ class VestidoService{
       return response
     }
 
+    public async getVestidoById(idVestido: number): Promise<Response<Vestido>> {
+      const response: Response<Vestido[]> = {
+        hasError: false
+      };
 
+      try{
+        const data = await axios.get(`${url_base}/${idVestido}`)
+
+        response.content = data.data.content;
+
+      }catch(error:any){
+        if (error.response && error.response.data && error.response.data.message) {
+          response.error = {
+            message: error.response.data.message,
+            code: error.response.status,
+            type: error.response.data.error,
+          };
+        } else {
+          response.error = { message: error.message };
+        }
+
+        response.hasError = true;
+      }
+
+      return response
+    }
+
+    public async cadastrarVestido(vestido: Vestido): Promise<Response<Vestido>> {
+      const response: Response<Vestido> = {
+        hasError: false
+      };
+
+      try{
+        const {data} = await axios.post(`${url_base}`, {...vestido});
+
+        response.content = data.content;
+      }catch(error: any){
+        if (error.response && error.response.data && error.response.data.message) {
+          response.error = {
+            message: error.response.data.message,
+            code: error.response.status,
+            type: error.response.data.error,
+          }
+        }else{
+          response.error = {message: error.message}
+        }
+
+        response.hasError = true
+      }
+
+      return response;
+    }
 
 }
 

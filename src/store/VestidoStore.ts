@@ -14,7 +14,6 @@ export const VestidoStore = defineStore("VestidoStore" , () => {
   const totalElementsLocal = ref(0);
   const totalElements = computed(() => totalElementsLocal);
 
-
   const totalPagesLocal = ref(0);
   const totalPages = computed(() => totalElementsLocal);
 
@@ -26,9 +25,9 @@ export const VestidoStore = defineStore("VestidoStore" , () => {
   const vestidoLocal = ref<Vestido>({
     idVestido: null,
     flSituacao: '',
-    imgVestido: '',
-    nuVetiso: '',
+    nuVestido: '',
     vlrVestido: 0,
+    imgVestido: { idVestido: null, imgVestido: null},
   })
 
 
@@ -44,14 +43,46 @@ export const VestidoStore = defineStore("VestidoStore" , () => {
     }
   };
 
+  const GetVestidoById = async (idVestido: number) => {
+    try {
+        const response = await VestidoService.getVestidoById(idVestido);
+
+        vestidoLocal.value = response.content;
+
+        // totalElementsLocal.value = response.totalElements;
+        // totalPagesLocal.value = response.totalPages;
+    } catch (error) {
+        console.error("Erro ao buscar vestidos: ", error);
+    }
+  };
+
+  const SetVestido = (vestidoPar: Vestido) => {
+    vestidoLocal.value = vestidoPar;
+  }
+
+  const ClearVestido = () => {
+    vestidoLocal.value = {
+      idVestido: null,
+      flSituacao: '',
+      nuVestido: '',
+      vlrVestido: 0,
+      imgVestido: { idVestido: null, imgVestido: null},
+    }
+  }
+
+
   return {
     vestidos,
     vestido,
     GetAllVestidos,
+    GetVestidoById,
+    SetVestido,
+    ClearVestido,
     totalElements,
     totalPages
   }
 
-
 });
+
+export default VestidoStore;
 

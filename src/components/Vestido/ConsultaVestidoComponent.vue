@@ -1,13 +1,16 @@
 <template>
   <v-app>
     <v-container>
-      <v-card class="pa-1">
-        <v-btn prepend-icon="mdi-account-plus">
-          Novo
-        </v-btn>
+      <v-card  class="pa-2 mb-2" >
+          <v-btn
+            prepend-icon="mdi-account-plus"
+            @click="irParaNovoCadastro"
+          >
+            Novo
+          </v-btn>
       </v-card>
 
-      <v-card class="ma-1 d-flex border-0 pa-1">
+      <v-card class="mb-2 pa-2">
         <v-text-field
           :loading="loading"
           append-inner-icon="mdi-magnify"
@@ -18,41 +21,40 @@
           maxlength="100"
           @keyup.enter="loadItems"
         />
+
+        <v-row class="mt-2">
+          <v-col
+            v-for="vestido in vestidos"
+            :key="vestido.idVestido"
+            cols="12"
+            sm="6"
+            md="4"
+          >
+            <v-card elevation="3">
+              <v-img
+                :src="`data:image/jpeg;base64,${vestido.imgVestido}`"
+                alt="Imagem do Vestido"
+                height="200px"
+                @click="openDialog(vestido.imgVestido)"
+              ></v-img>
+              <v-card-text>{{ formatNumeroVestido(vestido.nuVestido) }}</v-card-text>
+              <v-card-text>{{ formatCurrency(vestido.vlrVestido) }}</v-card-text>
+              <!-- <v-card-text>{{ formatSituacao(vestido.flSituacao) }}</v-card-text> -->
+              <v-card-actions >
+                <v-btn size="small" variant="plain" @click="editarCadastro(vestido)">
+                  <v-icon>mdi-eye</v-icon>
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <v-pagination
+          v-model="pagination.page"
+          :length="totalPages"
+          @input="loadItems"
+        ></v-pagination>
       </v-card>
-
-      <v-row class="pa-1">
-        <v-col
-          v-for="vestido in vestidos"
-          :key="vestido.idVestido"
-          cols="12"
-          sm="6"
-          md="4"
-        >
-          <v-card elevation="3">
-            <v-img
-              :src="`data:image/jpeg;base64,${vestido.imgVestido}`"
-              alt="Imagem do Vestido"
-              height="200px"
-              @click="openDialog(vestido.imgVestido)"
-            ></v-img>
-            <v-card-text>{{ formatNumeroVestido(vestido.nuVestido) }}</v-card-text>
-            <v-card-text>{{ formatCurrency(vestido.vlrVestido) }}</v-card-text>
-            <!-- <v-card-text>{{ formatSituacao(vestido.flSituacao) }}</v-card-text> -->
-            <v-card-actions >
-              <v-btn size="small" variant="plain" @click="editarCadastro(vestido)">
-                <v-icon>mdi-eye</v-icon>
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-
-      <v-pagination
-        v-model="pagination.page"
-        :length="totalPages"
-        @input="loadItems"
-      ></v-pagination>
-
       <v-snackbar
         rounded="pill"
         :timeout="2000"
@@ -82,7 +84,6 @@
 <script lang="ts" setup>
     import {ref, onMounted } from 'vue';
     import router from '@/routes/index';
-    import { VDataTableServer } from 'vuetify/components/VDataTable';
     import { VestidoStore } from '@/store/VestidoStore';
     import Vestido from '@/types/VestidoType';
 
@@ -97,6 +98,8 @@
 
     const { vestidos,
             GetAllVestidos,
+            SetVestido,
+            ClearVestido,
             totalElements,
             totalPages} = vestidoStore;
 
@@ -122,7 +125,8 @@
     ];
 
     const editarCadastro = ( vestido: Vestido ) => {
-      console.log("Editando vestido")
+      SetVestido(vestido)
+      irParaEdicaoDeCadastro();
     }
 
     const fetchVestidos = async () => {
@@ -163,6 +167,10 @@
       // }
     }
 
+    const irParaEdicaoDeCadastro = () => {
+      router.push({ name: 'CadastroVestido' });
+    }
+
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
     };
@@ -179,4 +187,11 @@
       selectedImage.value = imgVestido;
       dialog.value = true;
     }
+
+    const irParaNovoCadastro = () => {
+      ClearVestido();
+
+      router.push({ name: 'CadastroVestido' });
+    }
+
 </script>

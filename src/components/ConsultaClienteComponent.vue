@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <v-container>
-            <v-card  class="pa-1" >
+            <v-card  class="pa-2 mb-2" >
                 <v-btn
                   prepend-icon="mdi-account-plus"
                   @click="irParaNovoCadastro"
@@ -10,55 +10,57 @@
                 </v-btn>
             </v-card>
 
-            <v-card class="ma-1 d-flex border-0 pa-2">
-              <v-text-field
-                  :loading="loading"
-                  append-inner-icon="mdi-magnify"
-                  label="Nome/Cpf/Cnpj"
-                  hide-details
-                  @click:append-inner="loadItems"
-                  v-model="nomePesquisa"
-                  maxlength="100"
-                  @keyup.enter="loadItems"
-                />
+            <v-card class="mb-2 pa-2">
+              <v-row class="pa-2">
+                <v-text-field
+                    :loading="loading"
+                    append-inner-icon="mdi-magnify"
+                    label="Nome/Cpf/Cnpj"
+                    hide-details
+                    @click:append-inner="loadItems"
+                    v-model="nomePesquisa"
+                    maxlength="100"
+                    @keyup.enter="loadItems"
+                  />
+              </v-row>
 
-            </v-card>
-
-            <v-card class="ma-1 d-flex border-0 pa-2">
-
-              <VDataTableServer
-                    v-model:items-per-page="pagination.itemsPerPage"
-                    :headers="headers"
-                    :items="clientes"
-                    :items-length="totalElements"
-                    no-data-text="Nenhum registro encontrado."
-                    @update:options="loadItems"
-                    >
-                    <template #item="{ item }">
-                        <tr>
-                            <td>{{ item.nmCliente }}</td>
-                            <td>{{ item.celular }}</td>
-                            <td>{{ item.rua }}</td>
-                            <td>{{ item.numero }}</td>
-                            <td>
-                              <v-btn size="small"
-                                     variant="plain"
-                                     @click="editarCadastro(item)">
-                                <v-icon>mdi-eye</v-icon>
-                              </v-btn>
-                            </td>
-                            <!-- <td>
-                              <v-btn
-                                variant="plain"
-                                size="small"
-                                @click="item.idCliente !== undefined? excluirCliente(item.idCliente): null"
-                              >
-                                <v-icon>mdi-delete</v-icon>
-                              </v-btn>
-                            </td> -->
-                        </tr>
-                    </template>
-              </VDataTableServer>
+              <v-row class="mt-2" >
+                <v-col cols="12">
+                <VDataTableServer class="mt-2"
+                      v-model:items-per-page="pagination.itemsPerPage"
+                      :headers="headers"
+                      :items="clientes"
+                      :items-length="totalElements"
+                      no-data-text="Nenhum registro encontrado."
+                      @update:options="loadItems"
+                      >
+                      <template #item="{ item }">
+                          <tr>
+                              <td>{{ item.nmCliente }}</td>
+                              <td>{{ item.celular }}</td>
+                              <td>{{ item.rua }}</td>
+                              <td>{{ item.numero }}</td>
+                              <td>
+                                <v-btn size="small"
+                                      variant="plain"
+                                      @click="editarCadastro(item)">
+                                  <v-icon>mdi-eye</v-icon>
+                                </v-btn>
+                              </td>
+                              <!-- <td>
+                                <v-btn
+                                  variant="plain"
+                                  size="small"
+                                  @click="item.idCliente !== undefined? excluirCliente(item.idCliente): null"
+                                >
+                                  <v-icon>mdi-delete</v-icon>
+                                </v-btn>
+                              </td> -->
+                          </tr>
+                      </template>
+                </VDataTableServer>
+              </v-col>
+              </v-row>
             </v-card>
 
             <v-snackbar
