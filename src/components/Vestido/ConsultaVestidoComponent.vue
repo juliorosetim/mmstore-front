@@ -58,9 +58,11 @@
 
         <v-pagination
           v-model="pagination.page"
-          :length="totalPages"
+          :length="pagination.totalPages"
           @input="carregarVestidos"
+          size="20"
         ></v-pagination>
+
       </v-card>
       <v-snackbar
         rounded="pill"
@@ -89,7 +91,7 @@
 </template>
 
 <script lang="ts" setup>
-    import {ref, onMounted } from 'vue';
+    import {ref, onMounted,watch} from 'vue';
     import router from '@/routes/index';
     import { VestidoStore } from '@/store/VestidoStore';
     import Vestido from '@/types/VestidoType';
@@ -113,7 +115,8 @@
 
     const pagination = ref({
       page: 1,
-      itemsPerPage: 50,
+      itemsPerPage: 9,
+      totalPages: 1
     });
 
     const snackBar = ref({
@@ -140,43 +143,76 @@
       irParaEdicaoDeCadastro();
     }
 
+    // const fetchVestidos = async () => {
+    //   await GetAllVestidos(pagination.value.page, pagination.value.itemsPerPage);
+    // }
+
     const fetchVestidos = async () => {
-      await GetAllVestidos(pagination.value.page, pagination.value.itemsPerPage);
-    }
+      await carregarVestidos({ page: pagination.value.page, itemsPerPage: pagination.value.itemsPerPage });
+    };
 
     onMounted( async () => {
         await fetchVestidos();
     });
 
+    watch(
+      () => pagination.value.page,
+      async (newPage) => {
+        await carregarVestidos();
+      }
+    );
+
     const clearPagination = () => {
       pagination.value.page = 1;
-      pagination.value.itemsPerPage = 50;
+      pagination.value.itemsPerPage = 9;
     }
 
-    const carregarVestidos = async (options: any) => {
-      console.log("Carregando vestidos")
-      clearPagination();
+    // const carregarVestidos = async (options: any) => {
+    //   console.log("Carregando vestidos")
+    //   // clearPagination();
 
-      if (deletando.value) {
-        console.log('aqui')
-        await fetchVestidos();
+    //   if (deletando.value) {
+    //     console.log('aqui')
+    //     await fetchVestidos();
 
-        deletando.value = false;
-      }else if (!nuVestido.value == '' || !nuVestido.value == undefined) {
-        loading.value = true;
+    //     deletando.value = false;
+    //   }else if (!nuVestido.value == '' || !nuVestido.value == undefined) {
+    //     loading.value = true;
 
-        await GetVestidoByNuVestido(nuVestido.value, pagination.value.page, pagination.value.itemsPerPage);
+    //     await GetVestidoByNuVestido(nuVestido.value, pagination.value.page, pagination.value.itemsPerPage);
 
-        loading.value = false;
-      } else{
-        if(options.page !== undefined && options.itemsPerPage !== undefined) {
-          pagination.value.page = options.page;
-          pagination.value.itemsPerPage = options.itemsPerPage;
-        }
+    //     loading.value = false;
+    //   } else{
+    //     // if(options.page !== undefined && options.itemsPerPage !== undefined) {
+    //     //   pagination.value.page = options.page;
+    //     //   pagination.value.itemsPerPage = options.itemsPerPage;
+    //     // }
 
-        await fetchVestidos()
+    //     await fetchVestidos()
+    //   }
+
+    //   totalPages.value = vestidoStore.totalPages;
+    // }
+
+    const carregarVestidos = async (options: any = {}) => {
+      loading.value = true;
+
+      // Se `options.page` estiver indefinido, usa o valor de `pagination`
+      const currentPage = options.page || pagination.value.page;
+      const itemsPerPage = options.itemsPerPage || pagination.value.itemsPerPage;
+
+      if (nuVestido.value) {
+        await GetVestidoByNuVestido(nuVestido.value, currentPage, itemsPerPage);
+      } else {
+        await GetAllVestidos(currentPage, itemsPerPage);
       }
-    }
+
+      // Atualizando totalPages com o valor vindo do backend
+      pagination.value.page = currentPage;
+      pagination.value.totalPages = totalPages;
+
+      loading.value = false;
+    };
 
     const irParaEdicaoDeCadastro = () => {
       router.push({ name: 'CadastroVestido' });

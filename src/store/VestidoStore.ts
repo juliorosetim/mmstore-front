@@ -8,7 +8,7 @@ export const VestidoStore = defineStore("VestidoStore", () => {
 
   const pagination = ref({
     page: 1,
-    itemsPerPage: 10,
+    itemsPerPage: 9,
   });
 
   const totalElementsLocal = ref(0);
