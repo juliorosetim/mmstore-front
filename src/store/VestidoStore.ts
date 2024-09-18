@@ -1,10 +1,10 @@
-import {defineStore} from "pinia"
+import { defineStore } from "pinia"
 import { computed, ref } from "vue";
 import Vestido from "@/types/VestidoType";
 import VestidoService from "@/Service/VestidoService"
 
 
-export const VestidoStore = defineStore("VestidoStore" , () => {
+export const VestidoStore = defineStore("VestidoStore", () => {
 
   const pagination = ref({
     page: 1,
@@ -27,32 +27,32 @@ export const VestidoStore = defineStore("VestidoStore" , () => {
     flSituacao: '',
     nuVestido: '',
     vlrVestido: 0,
-    imgVestido: { idVestido: null, imgVestido: null},
+    imgVestido: { idVestido: null, imgVestido: null },
   })
 
 
   const GetAllVestidos = async (page: number, itemsPerPage: number) => {
     try {
-        const response = await VestidoService.getAllVestidos(page, itemsPerPage);
+      const response = await VestidoService.getAllVestidos(page, itemsPerPage);
 
-        vestidoList.value = response.content;
-        totalElementsLocal.value = response.totalElements;
-        totalPagesLocal.value = response.totalPages;
+      vestidoList.value = response.content;
+      totalElementsLocal.value = response.totalElements;
+      totalPagesLocal.value = response.totalPages;
     } catch (error) {
-        console.error("Erro ao buscar vestidos: ", error);
+      console.error("Erro ao buscar vestidos: ", error);
     }
   };
 
   const GetVestidoById = async (idVestido: number) => {
     try {
-        const response = await VestidoService.getVestidoById(idVestido);
+      const response = await VestidoService.getVestidoById(idVestido);
 
-        vestidoLocal.value = response.content;
+      vestidoLocal.value = response.content;
 
-        // totalElementsLocal.value = response.totalElements;
-        // totalPagesLocal.value = response.totalPages;
+      // totalElementsLocal.value = response.totalElements;
+      // totalPagesLocal.value = response.totalPages;
     } catch (error) {
-        console.error("Erro ao buscar vestidos: ", error);
+      console.error("Erro ao buscar vestidos: ", error);
     }
   };
 
@@ -66,9 +66,19 @@ export const VestidoStore = defineStore("VestidoStore" , () => {
       flSituacao: '',
       nuVestido: '',
       vlrVestido: 0,
-      imgVestido: { idVestido: null, imgVestido: null},
+      imgVestido: { idVestido: null, imgVestido: null },
     }
   }
+
+  const GetVestidoByNuVestido = async (nuVestido: string, page: number, itemsPerPage: number) => {
+    try {
+      const response = await VestidoService.findByNuVstido(nuVestido, pagination.value.page,
+        pagination.value.itemsPerPage);
+      vestidoList.value = response;
+    } catch (error) {
+      console.error("Erro ao buscar vestido: ", error);
+    }
+  };
 
 
   return {
@@ -78,6 +88,7 @@ export const VestidoStore = defineStore("VestidoStore" , () => {
     GetVestidoById,
     SetVestido,
     ClearVestido,
+    GetVestidoByNuVestido,
     totalElements,
     totalPages
   }

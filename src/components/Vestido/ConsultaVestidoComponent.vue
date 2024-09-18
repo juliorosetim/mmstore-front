@@ -16,10 +16,10 @@
           append-inner-icon="mdi-magnify"
           label="Nº do vestido"
           hide-details
-          @click:append-inner="loadItems"
-          v-model="nomePesquisa"
+          @click:append-inner="carregarVestidos"
+          v-model="nuVestido"
           maxlength="100"
-          @keyup.enter="loadItems"
+          @keyup.enter="carregarVestidos"
         />
 
         <v-row class="mt-2">
@@ -32,11 +32,18 @@
           >
             <v-card elevation="3">
               <v-img
-                :src="`data:image/jpeg;base64,${vestido.imgVestido}`"
+                v-if="vestido.imgVestido && vestido.imgVestido.length > 0"
+                :src="`data:image/jpeg;base64,${vestido.imgVestido[0].imgVestido}`"
                 alt="Imagem do Vestido"
                 height="200px"
-                @click="openDialog(vestido.imgVestido)"
+                @click="openDialog(vestido.imgVestido[0].imgVestido)"
               ></v-img>
+              <v-img
+                v-else
+                src=""
+                alt="Imagem não disponível"
+                height="200px"
+              />
               <v-card-text>{{ formatNumeroVestido(vestido.nuVestido) }}</v-card-text>
               <v-card-text>{{ formatCurrency(vestido.vlrVestido) }}</v-card-text>
               <!-- <v-card-text>{{ formatSituacao(vestido.flSituacao) }}</v-card-text> -->
@@ -52,7 +59,7 @@
         <v-pagination
           v-model="pagination.page"
           :length="totalPages"
-          @input="loadItems"
+          @input="carregarVestidos"
         ></v-pagination>
       </v-card>
       <v-snackbar
@@ -92,7 +99,7 @@
 
     const deletando = ref<boolean>(false);
     const loading = ref<boolean>(false);
-    const nomePesquisa = ref<string>('');
+    const nuVestido = ref<string>('');
 
     const vestidoStore = VestidoStore();
 
@@ -100,12 +107,13 @@
             GetAllVestidos,
             SetVestido,
             ClearVestido,
+            GetVestidoByNuVestido,
             totalElements,
             totalPages} = vestidoStore;
 
     const pagination = ref({
       page: 1,
-      itemsPerPage: 10,
+      itemsPerPage: 50,
     });
 
     const snackBar = ref({
@@ -126,6 +134,9 @@
 
     const editarCadastro = ( vestido: Vestido ) => {
       SetVestido(vestido)
+
+      console.log(vestido)
+
       irParaEdicaoDeCadastro();
     }
 
@@ -139,32 +150,32 @@
 
     const clearPagination = () => {
       pagination.value.page = 1;
-      pagination.value.itemsPerPage = 10;
+      pagination.value.itemsPerPage = 50;
     }
 
-    const loadItems = async (options: any) => {
+    const carregarVestidos = async (options: any) => {
       console.log("Carregando vestidos")
       clearPagination();
 
-      // if (deletando.value) {
-      //   console.log('aqui')
-      //   await fetchVestidos();
+      if (deletando.value) {
+        console.log('aqui')
+        await fetchVestidos();
 
-      //   deletando.value = false;
-      // }else if (!nomePesquisa.value == '' || !nomePesquisa.value == undefined) {
-      //   loading.value = true;
+        deletando.value = false;
+      }else if (!nuVestido.value == '' || !nuVestido.value == undefined) {
+        loading.value = true;
 
-      //   await GetClientesByNmCliente(nomePesquisa.value, pagination.value.page, pagination.value.itemsPerPage);
+        await GetVestidoByNuVestido(nuVestido.value, pagination.value.page, pagination.value.itemsPerPage);
 
-      //   loading.value = false;
-      // } else{
-      //   if(options.page !== undefined && options.itemsPerPage !== undefined) {
-      //     pagination.value.page = options.page;
-      //     pagination.value.itemsPerPage = options.itemsPerPage;
-      //   }
+        loading.value = false;
+      } else{
+        if(options.page !== undefined && options.itemsPerPage !== undefined) {
+          pagination.value.page = options.page;
+          pagination.value.itemsPerPage = options.itemsPerPage;
+        }
 
-      //   await fetchClientes()
-      // }
+        await fetchVestidos()
+      }
     }
 
     const irParaEdicaoDeCadastro = () => {

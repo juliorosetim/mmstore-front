@@ -3,10 +3,10 @@ interface Vestido {
   nuVestido: string;
   vlrVestido: number;
   flSituacao: string;
-  imgVestido: {
+  imgVestido?: [{
     idImgVestido?: number | null
     imgVestido?: string | null
-  };
+  }];
 }
 
 export default Vestido;
