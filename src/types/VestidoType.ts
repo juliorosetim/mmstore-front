@@ -7,6 +7,7 @@ interface Vestido {
     idImgVestido?: number | null
     imgVestido?: string | null
   }];
+  cor?: string;
 }
 
 export default Vestido;

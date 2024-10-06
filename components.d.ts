@@ -9,10 +9,12 @@ declare module 'vue' {
   export interface GlobalComponents {
     CadastroClienteComponent: typeof import('./src/components/CadastroClienteComponent.vue')['default']
     CadastroClienteDialog: typeof import('./src/components/CadastroClienteDialog.vue')['default']
+    CadastroLocacaoComponent: typeof import('./src/components/Locacao/CadastroLocacaoComponent.vue')['default']
     CadastroVestido: typeof import('./src/components/Vestido/CadastroVestido.vue')['default']
     CadastroVestidoComponent: typeof import('./src/components/Vestido/CadastroVestidoComponent.vue')['default']
     ComponentTeste: typeof import('./src/components/ComponentTeste.vue')['default']
     ConsultaClienteComponent: typeof import('./src/components/ConsultaClienteComponent.vue')['default']
+    ConsultaLocacaoComponent: typeof import('./src/components/Locacao/ConsultaLocacaoComponent.vue')['default']
     ConsultaVestido: typeof import('./src/components/Vestido/ConsultaVestido.vue')['default']
     ConsultaVestidoComponent: typeof import('./src/components/Vestido/ConsultaVestidoComponent.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
