@@ -32,11 +32,11 @@
           >
             <v-card elevation="3">
               <v-img
-                v-if="vestido.imgVestido && vestido.imgVestido.length > 0"
-                :src="`data:image/jpeg;base64,${vestido.imgVestido[0].imgVestido}`"
+                v-if="vestido.imgVestidos && vestido.imgVestidos.length > 0"
+                :src="`data:image/jpeg;base64,${vestido.imgVestidos[0].imgVestido}`"
                 alt="Imagem do Vestido"
                 height="200px"
-                @click="openDialog(vestido.imgVestido[0].imgVestido)"
+                @click="openDialog(vestido.imgVestidos[0].imgVestido)"
               ></v-img>
               <v-img
                 v-else

@@ -3,7 +3,7 @@ interface Vestido {
   nuVestido: string;
   vlrVestido: number;
   flSituacao: string;
-  imgVestido?: [{
+  imgVestidos?: [{
     idImgVestido?: number | null
     imgVestido?: string | null
   }];

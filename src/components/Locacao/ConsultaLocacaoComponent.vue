@@ -150,7 +150,7 @@ import moment from 'moment';
   }
 
   const irParaEdicaoDeCadastro = () => {
-    router.push({ name: 'CadastroCliente' });
+    router.push({ name: 'CadastroLocacao' });
   }
 
   const formatCurrency = (value) => {
