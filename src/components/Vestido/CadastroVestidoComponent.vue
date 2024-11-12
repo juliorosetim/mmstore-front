@@ -195,14 +195,15 @@ const cadastrarVestido = async () => {
   initImgVestido();
 
   if (!vestido.value.imgVestido) {
-    vestido.value.imgVestido = [{}]; // Inicializa o array se ele for indefinido
+    vestido.value.imgVestido = []; // Inicializa o array se ele for indefinido
   }
 
   if (selectedFile.value) {
     const reader = new FileReader();
     reader.onloadend = async () => {
+
       const base64String = reader.result?.toString().replace('data:', '').replace(/^.+,/, '');
-      vestido.value.imgVestido[0] = { idImgVestido: imageId.value, imgVestido: base64String };
+      vestido.value.imgVestido.push({ idImgVestido: imageId.value, imgVestido: base64String });
 
       console.log(`Com imagem ${vestido}`);
 

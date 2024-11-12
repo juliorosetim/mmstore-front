@@ -67,7 +67,10 @@ class VestidoService {
       hasError: false
     };
 
+
     try {
+      console.log(`vestido sendo cadastrado ${JSON.stringify(vestido)}`)
+
       const { data } = await axios.post(`${url_base}`, { ...vestido });
 
       response.content = data.content;

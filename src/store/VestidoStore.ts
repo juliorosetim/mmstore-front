@@ -27,7 +27,7 @@ export const VestidoStore = defineStore("VestidoStore", () => {
     flSituacao: '',
     nuVestido: '',
     vlrVestido: 0,
-    imgVestido: { idVestido: null, imgVestido: null },
+    imgVestido: [{ idVestido: null, imgVestido: null }],
   })
 
 
@@ -66,7 +66,7 @@ export const VestidoStore = defineStore("VestidoStore", () => {
       flSituacao: '',
       nuVestido: '',
       vlrVestido: 0,
-      imgVestido: { idVestido: null, imgVestido: null },
+      imgVestido: [{ idVestido: null, imgVestido: null }],
     }
   }
 
