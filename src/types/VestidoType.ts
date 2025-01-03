@@ -3,10 +3,10 @@ interface Vestido {
   nuVestido: string;
   vlrVestido: number;
   flSituacao: string;
-  imgVestidos?: [{
+  imgVestidos?: {
     idImgVestido?: number | null
     imgVestido?: string | null
-  }];
+  }[] | undefined;
   cor?: string;
 }
 

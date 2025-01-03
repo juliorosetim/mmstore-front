@@ -112,25 +112,27 @@ const { vestido, ClearVestido } = vestidoStore;
 const imageUrl = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 const selectedFile = ref<File | null>(null);
-const imageId = ref<number | null>(null);
+const imageId = ref<number | null | undefined>(null);
 
 const initImgVestido = () => {
-  if (!vestido.value.imgVestido) {
-    vestido.value.imgVestido = [{}];
-  } else if (!vestido.value.imgVestido[0]) {
-    vestido.value.imgVestido[0] = {};
+  if (!vestido.value.imgVestidos) {
+    vestido.value.imgVestidos = [{}];
+  } else if (!vestido.value.imgVestidos[0]) {
+    vestido.value.imgVestidos[0] = {};
   }
 };
 
 onMounted(() => {
   initImgVestido();
-  if (!vestido.value.imgVestido) {
+  if (!vestido.value.imgVestidos) {
     vestido.value.imgVestidos = [{}];
   }
 
-  if (vestido.value.imgVestidos[0].imgVestido) {
+  if ((vestido.value) && (vestido.value.imgVestidos[0] != undefined)) {
     imageUrl.value = `data:image/jpeg;base64,${vestido.value.imgVestidos[0].imgVestido}`;
     imageId.value = vestido.value.imgVestidos[0].idImgVestido;
+
+    //console.log(JSON.stringify(vestido.value.imgVestidos[0]))
   }
 });
 
@@ -141,7 +143,10 @@ const triggerFileInput = () => {
 const onFileChange = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0];
 
+  console.log('1')
+
   if (file) {
+    console.log('2')
     const reader = new FileReader();
 
     reader.onload = (e) => {
@@ -150,31 +155,61 @@ const onFileChange = (event: Event) => {
 
     reader.readAsDataURL(file);
     selectedFile.value = file;
+
+
+    setImgVestidoToObjectSave()
   }
 };
 
-const cadastrarVestido = async () => {
-  initImgVestido();
+const setImgVestidoToObjectSave = () => {
 
-  if (!vestido.value.imgVestido) {
-    vestido.value.imgVestido = [{}];
-  }
+  console.log(`setImgVestidoToObjectSave ${JSON.stringify(selectedFile.value)}`)
 
   if (selectedFile.value) {
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64String = reader.result?.toString().replace('data:', '').replace(/^.+,/, '');
-      vestido.value.imgVestidos[0] = { idImgVestido: imageId.value, imgVestido: base64String };
 
-      const response = await VestidoService.cadastrarVestido(vestido.value);
-      console.log(`HasErro ${response.hasError}`);
+      vestido.value.imgVestidos?.push({idImgVestido: imageId.value, imgVestido: base64String});
+
+      // const response = await VestidoService.cadastrarVestido(vestido.value);
+      // console.log(`HasErro ${response.hasError}`);
     };
     reader.readAsDataURL(selectedFile.value);
   } else {
-    vestido.value.imgVestidos[0] = { idImgVestido: null, imgVestido: null };
-    const response = await VestidoService.cadastrarVestido(vestido.value);
-    console.log(`HasErro ${response.hasError}`);
+    vestido.value.imgVestidos.push({ idImgVestido: null, imgVestido: null });
+    // const response = await VestidoService.cadastrarVestido(vestido.value);
+    // console.log(`HasErro ${response.hasError}`);
   }
+}
+
+const cadastrarVestido = async () => {
+  initImgVestido();
+
+  if (!vestido.value.imgVestidos) {
+    vestido.value.imgVestidos = [{}];
+  }
+
+  const response = await VestidoService.cadastrarVestido(vestido.value);
+
+  console.log(`HasErro ${response.hasError}`);
+
+  // if (selectedFile.value) {
+  //   const reader = new FileReader();
+  //   reader.onloadend = async () => {
+  //     const base64String = reader.result?.toString().replace('data:', '').replace(/^.+,/, '');
+
+  //     vestido.value.imgVestidos[0] = { idImgVestido: imageId.value, imgVestido: base64String };
+
+  //     const response = await VestidoService.cadastrarVestido(vestido.value);
+  //     console.log(`HasErro ${response.hasError}`);
+  //   };
+  //   reader.readAsDataURL(selectedFile.value);
+  // } else {
+  //   vestido.value.imgVestidos[0] = { idImgVestido: null, imgVestido: null };
+  //   const response = await VestidoService.cadastrarVestido(vestido.value);
+  //   console.log(`HasErro ${response.hasError}`);
+  // }
 };
 
 const irParaConsulta = () => {
