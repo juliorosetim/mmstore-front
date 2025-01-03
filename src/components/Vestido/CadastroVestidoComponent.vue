@@ -2,7 +2,7 @@
   <v-responsive>
     <v-app>
       <v-container>
-        <v-card prepend-icon="" title="Cadastro de vestidos" ></v-card>
+        <v-card prepend-icon="" title="Cadastro de vestidos"></v-card>
 
         <v-card class="mt-2 pl-2">
           <v-row class="pt-2 pb-2">
@@ -26,40 +26,57 @@
               </div>
             </v-col>
 
-            <v-col cols="3">
-              <v-text-field
-                type="text"
-                id="nuVestido"
-                v-model="vestido.nuVestido"
-                required
-                class="input"
-                label="Nº Vestido"
-                hide-details="auto"
-                maxlength="100"
-              />
-            </v-col>
+            <v-col cols="9">
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    type="text"
+                    id="nuVestido"
+                    v-model="vestido.nuVestido"
+                    required
+                    class="input"
+                    label="Nº Vestido"
+                    hide-details="auto"
+                    maxlength="100"
+                  />
+                </v-col>
 
-            <v-col cols="3">
-              <v-text-field
-                type="text"
-                id="vlrVestido"
-                v-model="vestido.vlrVestido"
-                required
-                class="input"
-                label="R$ Valor"
-                hide-details="auto"
-                maxlength="14"
-              />
-            </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    type="text"
+                    id="vlrVestido"
+                    v-model="vestido.vlrVestido"
+                    required
+                    class="input"
+                    label="R$ Valor"
+                    hide-details="auto"
+                    maxlength="14"
+                  />
+                </v-col>
 
-            <v-col cols="2">
-              <v-checkbox
-                label="Ativo"
-                true-value="S"
-                false-value="N"
-                v-model="vestido.flSituacao"
-              >
-              </v-checkbox>
+                <v-col cols="12">
+                  <v-text-field
+                    type="text"
+                    id="cor"
+                    v-model="vestido.cor"
+                    required
+                    class="input"
+                    label="Cor predominante"
+                    hide-details="auto"
+                    maxlength="14"
+                  />
+                </v-col>
+
+                <v-col cols="12">
+                  <v-checkbox
+                    label="Ativo"
+                    true-value="S"
+                    false-value="N"
+                    v-model="vestido.flSituacao"
+                  ></v-checkbox>
+                </v-col>
+
+              </v-row>
             </v-col>
           </v-row>
         </v-card>
@@ -67,18 +84,12 @@
         <v-card class="mt-4 pa-2">
           <v-row dense justify="center">
             <v-col cols="2">
-              <v-btn
-                @click="cadastrarVestido"
-                prepend-icon="mdi-content-save-all"
-              >
+              <v-btn @click="cadastrarVestido" prepend-icon="mdi-content-save-all">
                 Salvar
               </v-btn>
             </v-col>
             <v-col cols="2">
-              <v-btn
-                @click="irParaConsulta"
-                prepend-icon="mdi-arrow-left"
-              >
+              <v-btn @click="irParaConsulta" prepend-icon="mdi-arrow-left">
                 Voltar
               </v-btn>
             </v-col>
@@ -101,39 +112,27 @@ const { vestido, ClearVestido } = vestidoStore;
 const imageUrl = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 const selectedFile = ref<File | null>(null);
-const imageId = ref<number | null>(null);
+const imageId = ref<number | null | undefined>(null);
 
-// Verifica se já existe uma imagem e exibe na montagem do componente
-// onMounted(() => {
-//   console.log(`onMounted ${vestido.value}`)
-
-//   if (vestido.value.imgVestido[0].imgVestido) {
-//     // Se já houver uma imagem, cria a URL para exibir a imagem no campo de upload
-//     imageUrl.value = `data:image/jpeg;base64,${vestido.value.imgVestido[0].imgVestido}`;
-//     imageId.value = vestido.value.imgVestido[0].idImgVestido;
-//   }
-// });
-
-// Função para inicializar o array imgVestido se necessário
 const initImgVestido = () => {
-  if (!vestido.value.imgVestido) {
-    vestido.value.imgVestido = [{}];
-  } else if (!vestido.value.imgVestido[0]) {
-    vestido.value.imgVestido[0] = {};
+  if (!vestido.value.imgVestidos) {
+    vestido.value.imgVestidos = [{}];
+  } else if (!vestido.value.imgVestidos[0]) {
+    vestido.value.imgVestidos[0] = {};
   }
 };
 
 onMounted(() => {
   initImgVestido();
-  // Inicializa o array imgVestido caso não esteja inicializado
-  if (!vestido.value.imgVestido) {
-    vestido.value.imgVestido = [{}]; // Cria um objeto vazio no array
+  if (!vestido.value.imgVestidos) {
+    vestido.value.imgVestidos = [{}];
   }
 
-  if (vestido.value.imgVestido[0].imgVestido) {
-    // Se já houver uma imagem, cria a URL para exibir a imagem no campo de upload
-    imageUrl.value = `data:image/jpeg;base64,${vestido.value.imgVestido[0].imgVestido}`;
-    imageId.value = vestido.value.imgVestido[0].idImgVestido;
+  if ((vestido.value) && (vestido.value.imgVestidos[0] != undefined)) {
+    imageUrl.value = `data:image/jpeg;base64,${vestido.value.imgVestidos[0].imgVestido}`;
+    imageId.value = vestido.value.imgVestidos[0].idImgVestido;
+
+    //console.log(JSON.stringify(vestido.value.imgVestidos[0]))
   }
 });
 
@@ -141,81 +140,76 @@ const triggerFileInput = () => {
   fileInput.value?.click();
 };
 
-// Função para carregar e exibir a imagem no campo de upload
-// const onFileChange = (event: Event) => {
-//   console.log(`event ${event}`)
-//   const file = (event.target as HTMLInputElement).files?.[0];
-//   if (file) {
-//     const reader = new FileReader();
-//     reader.onload = (e) => {
-//       imageUrl.value = e.target?.result as string;
-//     };
-//     reader.readAsDataURL(file);
-//     selectedFile.value = file;
-//   }
-// };
-
 const onFileChange = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0];
 
+  console.log('1')
+
   if (file) {
+    console.log('2')
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      // Atualiza a URL da imagem base64 para exibição
       imageUrl.value = e.target?.result as string;
     };
 
-    reader.readAsDataURL(file);  // Converte o arquivo para base64
-    selectedFile.value = file;   // Armazena o arquivo selecionado
+    reader.readAsDataURL(file);
+    selectedFile.value = file;
+
+
+    setImgVestidoToObjectSave()
   }
 };
 
-// const cadastrarVestido = async () => {
-//   if (selectedFile.value) {
-//     const reader = new FileReader();
-//     reader.onloadend = async () => {
-//       const base64String = reader.result?.toString().replace('data:', '').replace(/^.+,/, '');
-//       vestido.value.imgVestido = [{ idImgVestido: imageId, imgVestido: base64String }];
+const setImgVestidoToObjectSave = () => {
 
-//       console.log(`Com imagem ${vestido}`);
-
-//       const response = await VestidoService.cadastrarVestido(vestido.value);
-//       console.log(`HasErro ${response.hasError}`);
-//     };
-//     reader.readAsDataURL(selectedFile.value);
-//   } else {
-//     vestido.value.imgVestido = [{idImgVestido: null, imgVestido: null }];
-//     const response = await VestidoService.cadastrarVestido(vestido.value);
-//     console.log(`HasErro ${response.hasError}`);
-//   }
-// };
-
-const cadastrarVestido = async () => {
-  initImgVestido();
-
-  if (!vestido.value.imgVestido) {
-    vestido.value.imgVestido = []; // Inicializa o array se ele for indefinido
-  }
+  console.log(`setImgVestidoToObjectSave ${JSON.stringify(selectedFile.value)}`)
 
   if (selectedFile.value) {
     const reader = new FileReader();
     reader.onloadend = async () => {
-
       const base64String = reader.result?.toString().replace('data:', '').replace(/^.+,/, '');
-      vestido.value.imgVestido.push({ idImgVestido: imageId.value, imgVestido: base64String });
 
-      console.log(`Com imagem ${vestido}`);
+      vestido.value.imgVestidos?.push({idImgVestido: imageId.value, imgVestido: base64String});
 
-      const response = await VestidoService.cadastrarVestido(vestido.value);
-      console.log(`HasErro ${response.hasError}`);
+      // const response = await VestidoService.cadastrarVestido(vestido.value);
+      // console.log(`HasErro ${response.hasError}`);
     };
     reader.readAsDataURL(selectedFile.value);
   } else {
-    vestido.value.imgVestido[0] = { idImgVestido: null, imgVestido: null };
-    const response = await VestidoService.cadastrarVestido(vestido.value);
-    console.log(`HasErro ${response.hasError}`);
+    vestido.value.imgVestidos.push({ idImgVestido: null, imgVestido: null });
+    // const response = await VestidoService.cadastrarVestido(vestido.value);
+    // console.log(`HasErro ${response.hasError}`);
   }
+}
+
+const cadastrarVestido = async () => {
+  initImgVestido();
+
+  if (!vestido.value.imgVestidos) {
+    vestido.value.imgVestidos = [{}];
+  }
+
+  const response = await VestidoService.cadastrarVestido(vestido.value);
+
+  console.log(`HasErro ${response.hasError}`);
+
+  // if (selectedFile.value) {
+  //   const reader = new FileReader();
+  //   reader.onloadend = async () => {
+  //     const base64String = reader.result?.toString().replace('data:', '').replace(/^.+,/, '');
+
+  //     vestido.value.imgVestidos[0] = { idImgVestido: imageId.value, imgVestido: base64String };
+
+  //     const response = await VestidoService.cadastrarVestido(vestido.value);
+  //     console.log(`HasErro ${response.hasError}`);
+  //   };
+  //   reader.readAsDataURL(selectedFile.value);
+  // } else {
+  //   vestido.value.imgVestidos[0] = { idImgVestido: null, imgVestido: null };
+  //   const response = await VestidoService.cadastrarVestido(vestido.value);
+  //   console.log(`HasErro ${response.hasError}`);
+  // }
 };
 
 const irParaConsulta = () => {

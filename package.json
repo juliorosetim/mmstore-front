@@ -18,7 +18,8 @@
     "vue-axios": "^3.5.2",
     "vue-router": "^4.4.0",
     "vuetify": "^3.5.8",
-    "yarn": "^1.22.22"
+    "yarn": "^1.22.22",
+    "moment": "^2.29.1"
   },
   "devDependencies": {
     "@babel/types": "^7.24.0",

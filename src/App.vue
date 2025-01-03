@@ -46,6 +46,12 @@
             :to="{ path: '/consulta-vestido' }"
           ></v-list-item>
           <v-list-item
+            prepend-icon="mdi-account"
+            title="Locação"
+            value="consulta-locacao"
+            :to="{ path: '/consulta-locacao' }"
+          ></v-list-item>
+          <v-list-item
             prepend-icon="mdi-credit-card"
             title="Sobre"
             value="sobre"

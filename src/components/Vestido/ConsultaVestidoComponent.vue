@@ -32,11 +32,11 @@
           >
             <v-card elevation="3">
               <v-img
-                v-if="vestido.imgVestido && vestido.imgVestido.length > 0"
-                :src="`data:image/jpeg;base64,${vestido.imgVestido[0].imgVestido}`"
+                v-if="vestido.imgVestidos && vestido.imgVestidos.length > 0"
+                :src="`data:image/jpeg;base64,${vestido.imgVestidos[0].imgVestido}`"
                 alt="Imagem do Vestido"
                 height="200px"
-                @click="openDialog(vestido.imgVestido[0].imgVestido)"
+                @click="openDialog(vestido.imgVestidos[0].imgVestido)"
               ></v-img>
               <v-img
                 v-else
@@ -44,9 +44,13 @@
                 alt="Imagem não disponível"
                 height="200px"
               />
-              <v-card-text>{{ formatNumeroVestido(vestido.nuVestido) }}</v-card-text>
-              <v-card-text>{{ formatCurrency(vestido.vlrVestido) }}</v-card-text>
-              <!-- <v-card-text>{{ formatSituacao(vestido.flSituacao) }}</v-card-text> -->
+              <v-card-text>
+                <p class="text-h5 font-weight-black">{{ formatNumeroVestido(vestido.nuVestido) }}</p>
+
+              </v-card-text>
+              <v-card-text>
+                <div class="text-h6 text-medium-emphasis font-weight-regular">{{ formatCurrency(vestido.vlrVestido) }}</div>
+              </v-card-text>
               <v-card-actions >
                 <v-btn size="small" variant="plain" @click="editarCadastro(vestido)">
                   <v-icon>mdi-eye</v-icon>
@@ -143,10 +147,6 @@
       irParaEdicaoDeCadastro();
     }
 
-    // const fetchVestidos = async () => {
-    //   await GetAllVestidos(pagination.value.page, pagination.value.itemsPerPage);
-    // }
-
     const fetchVestidos = async () => {
       await carregarVestidos({ page: pagination.value.page, itemsPerPage: pagination.value.itemsPerPage });
     };
@@ -166,33 +166,6 @@
       pagination.value.page = 1;
       pagination.value.itemsPerPage = 9;
     }
-
-    // const carregarVestidos = async (options: any) => {
-    //   console.log("Carregando vestidos")
-    //   // clearPagination();
-
-    //   if (deletando.value) {
-    //     console.log('aqui')
-    //     await fetchVestidos();
-
-    //     deletando.value = false;
-    //   }else if (!nuVestido.value == '' || !nuVestido.value == undefined) {
-    //     loading.value = true;
-
-    //     await GetVestidoByNuVestido(nuVestido.value, pagination.value.page, pagination.value.itemsPerPage);
-
-    //     loading.value = false;
-    //   } else{
-    //     // if(options.page !== undefined && options.itemsPerPage !== undefined) {
-    //     //   pagination.value.page = options.page;
-    //     //   pagination.value.itemsPerPage = options.itemsPerPage;
-    //     // }
-
-    //     await fetchVestidos()
-    //   }
-
-    //   totalPages.value = vestidoStore.totalPages;
-    // }
 
     const carregarVestidos = async (options: any = {}) => {
       loading.value = true;
