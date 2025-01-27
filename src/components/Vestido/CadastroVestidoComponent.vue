@@ -143,10 +143,7 @@ const triggerFileInput = () => {
 const onFileChange = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0];
 
-  console.log('1')
-
   if (file) {
-    console.log('2')
     const reader = new FileReader();
 
     reader.onload = (e) => {
@@ -155,7 +152,6 @@ const onFileChange = (event: Event) => {
 
     reader.readAsDataURL(file);
     selectedFile.value = file;
-
 
     setImgVestidoToObjectSave()
   }

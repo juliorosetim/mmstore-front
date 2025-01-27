@@ -13,6 +13,7 @@ declare module 'vue' {
     CadastroLocacaoVestido: typeof import('./src/components/locacaoVestido/CadastroLocacaoVestido.vue')['default']
     CadastroVestido: typeof import('./src/components/Vestido/CadastroVestido.vue')['default']
     CadastroVestidoComponent: typeof import('./src/components/Vestido/CadastroVestidoComponent.vue')['default']
+    ClienteAutoComplete: typeof import('./src/components/Cliente/ClienteAutoComplete.vue')['default']
     ComponentTeste: typeof import('./src/components/ComponentTeste.vue')['default']
     ConsultaClienteComponent: typeof import('./src/components/ConsultaClienteComponent.vue')['default']
     ConsultaLocacaoComponent: typeof import('./src/components/Locacao/ConsultaLocacaoComponent.vue')['default']
@@ -24,5 +25,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SnackBarComponent: typeof import('./src/components/SnackBarComponent.vue')['default']
+    VestidoAutoComplete: typeof import('./src/components/Vestido/VestidoAutoComplete.vue')['default']
   }
 }

@@ -1,3 +1,5 @@
+import Vestido from '@/types/VestidoType';
+
 interface Locacao {
   idLocacao: number | null;
   dtRetirada: string;
@@ -8,7 +10,7 @@ interface Locacao {
   cliente: { idCliente: number; nmCliente: string };
   locacaoVestido: [{
     idLocacaoVestido: number;
-    vestido: { idVestido: number }
+    vestido: Vestido
   }];
   pagamentosLocacao: [{
     idPagamento: number;

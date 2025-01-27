@@ -1,5 +1,6 @@
 import LocacaoVestidoService from "@/Service/LoacaoVestido/LocacaoVestidoService";
 import Locacao from "@/types/LocacaoVestido/LocacaoVestidoType";
+import Vestido from "@/types/VestidoType";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
@@ -19,6 +20,12 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
   const locacaoList = ref<Locacao[]>([]);
   const locacoes = computed(() => locacaoList);
 
+  const vestidosList = ref<Vestido[]>([]);
+  const vestidosLocacao = computed(() => vestidosList);
+
+  const locacaoLocal = ref<Locacao>();
+  const locacao = computed(() => locacaoLocal);
+
   const getLocacaoes = async (page: number, itemsPerPage: number) => {
     try {
       const response = await LocacaoVestidoService.findAllLocacoes(page, itemsPerPage)
@@ -35,7 +42,9 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     getLocacaoes,
     totalElements,
     totalPages,
-    locacoes
+    locacoes,
+    vestidosLocacao,
+    locacao
   }
 
 })
