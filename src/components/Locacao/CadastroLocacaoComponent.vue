@@ -12,6 +12,16 @@
     <v-row>
       <v-col>
         <v-text-field
+          v-model="dataEvento"
+          label="Data Evento"
+          type="date"
+          placeholder="dd/mm/aaaa"
+          >
+        </v-text-field>
+      </v-col>
+
+      <v-col>
+        <v-text-field
           v-model="dataRetirada"
           label="Data Retirada"
           type="date"
@@ -21,8 +31,8 @@
 
       <v-col>
         <v-text-field
-          v-model="dataEvento"
-          label="Data Evento"
+          v-model="dataDevolucao"
+          label="Data Devolução"
           type="date"
           placeholder="dd/mm/aaaa"
           >
@@ -35,27 +45,46 @@
       <v-col>
         <VestidoAutoComplete
           v-model="vestidoSelecionado"
-          @selected="handleVestidoSelected"
         />
       </v-col>
       <v-col>
         <v-btn
-          prepend-icon="mdi-plus" @click="adicionarVestido"
+          prepend-icon="mdi-plus" @click="adicionarVestidoLocal"
         />
       </v-col>
     </v-row>
     <!-- Grid de Vestidos -->
     <v-data-table
-      :items="vestidosLocacao"
+      :items="locacao.locacaoVestido"
       :headers="headersVestidos">
       <template v-slot:item.imgVestidos="{ item }">
         <v-img
-          :src="getImageUrl(item.imgVestidos[0].imgVestido)"
+          :src="getImageUrl(item.vestido?.imgVestidos?.[0]?.imgVestido)"
           max-height="100"
           max-width="100"
           contain
         />
       </template>
+
+      <template v-slot:item.nuVestido="{ item }">
+          {{ item.vestido.nuVestido }}
+      </template>
+
+      <template v-slot:item.vlrVestido="{ item }">
+          {{ formatCurrency(item.vestido.vlrVestido) }}
+      </template>
+
+      <template v-slot:item.actions="{ item }">
+        <v-btn
+          color="error"
+          icon
+          variant="text"
+          size="small"
+          @click="locacaoStore.removerVestido(item.vestido.nuVestido)"
+        >
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </template>
     </v-data-table>
 
     <!-- Campo Valor da Locação -->
@@ -72,21 +101,22 @@
         </v-text-field>
       </v-col>
       <v-col>
-        <!-- Campo Dinheiro -->
-        <v-combobox
-          v-model="dinheiro"
-          :items="opcoesDinheiro"
-          label="Dinheiro"
-          clearable
-        ></v-combobox>
+          <TipoPagamentoAutoComplete
+            v-model="tipoPagamentoSelecionado"
+            @selected="hanldeTipoPagamentoSelected"
+          />
       </v-col>
-      <v-col>
         <!-- Campo Data do Pagamento -->
+      <v-col>
         <v-text-field
           v-model="dataPagamento"
-          label="Data do Pagamento">
+          label="Data do Pagamento"
+          type="date"
+          placeholder="dd/mm/aaaa"
+          >
         </v-text-field>
       </v-col>
+
       <v-col>
         <v-btn
           prepend-icon="mdi-plus"
@@ -119,42 +149,47 @@
 <script setup lang="ts">
 import {ref, onMounted } from 'vue';
 import router from '@/routes/index';
-import axios from 'axios'
-import ClienteStore from '@/store/ClienteStore';
+// import axios from 'axios'
+// import ClienteStore from '@/store/ClienteStore';
 import ClienteAutoComplete from '@/components/Cliente/ClienteAutoComplete.vue';
 import VestidoAutoComplete from '../Vestido/VestidoAutoComplete.vue';
 import type Cliente from '@/types/ClienteType'
 import type Vestido from '@/types/VestidoType';
 import VestidoStore from '@/store/VestidoStore';
 import LocacaoStore from '@/store/LocacaoStore/LocacaoStore';
-import Locacao from '@/types/LocacaoVestido/LocacaoVestidoType';
+// import Locacao from '@/types/LocacaoVestido/LocacaoVestidoType';
+import TipoPagamentoAutoComplete from '../TipoPagamento/TipoPagamentoAutoComplete.vue';
+import TipoPagamento from '@/types/TipoPagamento/TipoPagamentoType';
 
   const clienteSelecionado = ref<Cliente | undefined>()
-  const vestidoSelecionado = ref<Vestido | undefined>()
+  const vestidoSelecionado = ref<Vestido | null>(null)
+
+  const tipoPagamentoSelecionado = ref<TipoPagamento | undefined>()
 
   const vestidoStore = VestidoStore();
   const { vestido, ClearVestido } = vestidoStore;
 
   const locacaoStore = LocacaoStore();
-  const {vestidosLocacao, locacao} = locacaoStore;
+  const {vestidosLocacao, locacao, adicionarVestido, adicionarCliente, adicionarTipoPagamento} = locacaoStore;
 
   const cliente = ref(null);
   const dataRetirada = ref(new Date().toISOString().substr(0,10));
   const dataDevolucao = ref(new Date().toISOString().substr(0,10));
   const dataEvento = ref(new Date().toISOString().substr(0,10));
   const vestidosSelecionados = ref([]);
-  const dataPagamento = ref('');
+  const dataPagamento = ref(new Date().toISOString().substr(0,10));
   const valorLocacao = ref('');
   const valor = ref('');
-  const dinheiro = ref(null);
-  const opcoesDinheiro = ref(['Dinheiro', 'Cartão']);
+  const tipoPagamento = ref(null);
+  // const opcoesDinheiro = ref(['Dinheiro', 'Cartão']);
   const pagamentos = ref([]);
-  const isLoading = ref(false)
+  // const isLoading = ref(false)
 
   const headersVestidos = [
     { title: 'Foto', key: 'imgVestidos' },
     { title: 'Vestido', key: 'nuVestido' },
     { title: 'Valor', key: 'vlrVestido' },
+    { title: '', key: 'actions' },
   ];
 
   const headersPagamentos = [
@@ -182,95 +217,62 @@ import Locacao from '@/types/LocacaoVestido/LocacaoVestidoType';
   }
 };
 
-  // onMounted( async () => {
-  //   await fetchClientes();
-  // });
-
-  const adicionarVestido = () => {
-    if(vestidoSelecionado.value){
-      vestidosLocacao.value.push(vestidoSelecionado.value)
-       vestidoSelecionado.value = undefined;
-     }
-  };
-
-  const adicionarPagamento = () => {
-    if (dataPagamento.value && valor.value && dinheiro.value) {
-      pagamentos.value.push({
-        data: dataPagamento.value,
-        valor: valor.value,
-        tipo: dinheiro.value,
-      });
-      dataPagamento.value = '';
-      valor.value = '';
-      dinheiro.value = null;
-    }
-  };
+  // const adicionarPagamento = () => {
+  //   if (dataPagamento.value && valor.value && tipoPagamento.value) {
+  //     pagamentos.value.push({
+  //       data: dataPagamento.value,
+  //       valor: valor.value,
+  //       tipo: tipoPagamento.value,
+  //     });
+  //     dataPagamento.value = '';
+  //     valor.value = '';
+  //     tipoPagamento.value = null;
+  //   }
+  // };
 
   const irParaConsulta = () => {
-    //clearCliente();
     router.push({ name: 'ConsultaLocacao' });
   }
 
   const handleClienteSelected = (cliente: Cliente) => {
 
     if (cliente){
-      const locacaoLocal: Locacao = {
-        cliente: {
-          idCliente: cliente.idCliente!,
-          nmCliente: cliente.nmCliente
-        }
-      }
-
-      locacao.value = locacaoLocal;
+      adicionarCliente(cliente)
     }
   }
 
-  const handleVestidoSelected = (vestidoPar: Vestido) => {
-    if (vestidoPar){
+  const hanldeTipoPagamentoSelected = (tipoPagamento: TipoPagamento) => {
 
-      vestidoSelecionado.value = vestidoPar;
-
-      // const LocacaoLocal: Locacao = {
-      //   ...locacao.value,  // Use locacao.value aqui
-      //   locacaoVestido: [
-      //     ...(locacao.value.locacaoVestido || []),
-      //     {
-      //       vestido: vestidoPar!
-      //     }]
-      // }
-
-      // locacao.value = LocacaoLocal;
+    if (tipoPagamento){
+      adicionarTipoPagamento(tipoPagamento)
     }
   }
 
-  // const removeVestido = (idVestido: number) => {
-  //   const LocacaoLocal: Locacao = {
-  //     ...locacao.value,
-  //     locacaoVestido: locacao.value.locacaoVestido.filter(
-  //       item => item.vestido !== idVestido
-  //     )
-  //   }
 
-  //   locacao.value = LocacaoLocal;
-  // }
+  function adicionarVestidoLocal() {
+    if (vestidoSelecionado.value) {
+      adicionarVestido(vestidoSelecionado.value);
+      vestidoSelecionado.value = null;
+    }
+  }
 
   const salvarLocacao = () => {
     console.log('Salvando....')
 
-      if (vestidoSelecionado.value){
-        const LocacaoLocal: Locacao = {
-          ...locacao.value,
-          locacaoVestido: [
-            ...(locacao.value.locacaoVestido || []),
-            {
-              vestido: vestidoSelecionado!
-            }]
-        }
+    locacao.dtEvento = dataEvento.value;
+    locacao.dtRetirada = dataRetirada.value;
+    locacao.dtDevolucao = dataDevolucao.value;
 
-        locacao.value = LocacaoLocal;
-      }
+    locacao.locacaoVestido.forEach(l => {
+      console.log(`Vestido.... ${ JSON.stringify(l.vestido.nuVestido)}`)
+    })
 
-      console.log('Salvo com sucesso....')
+    console.log(`Cliente.... ${ JSON.stringify(locacao.cliente)}`)
+
+    console.log(`DtEvento.... ${ JSON.stringify(locacao.dtEvento)}`)
+    console.log(`dtRetirada.... ${ JSON.stringify(locacao.dtRetirada)}`)
+    console.log(`dtDevolucao.... ${ JSON.stringify(locacao.dtDevolucao)}`)
+    console.log(`tipoPagamento.... ${ JSON.stringify(locacao.pagamentosLocacao)}`)
   }
 
   const formatCurrency = (value) => {

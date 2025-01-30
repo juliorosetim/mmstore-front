@@ -13,10 +13,10 @@ interface Locacao {
     vestido: Vestido
   }];
   pagamentosLocacao: [{
-    idPagamento: number;
-    vlrPagamento: number;
-    dtPagamento: Date;
-    tipoPagamento: { idTipoPagamento: number }
+    idPagamento?: number;
+    vlrPagamento?: number;
+    dtPagamento?: Date;
+    tipoPagamento?: { idTipoPagamento: number }
   }]
 };
 

@@ -20,11 +20,13 @@ declare module 'vue' {
     ConsultaLocacaoVestido: typeof import('./src/components/locacaoVestido/ConsultaLocacaoVestido.vue')['default']
     ConsultaVestido: typeof import('./src/components/Vestido/ConsultaVestido.vue')['default']
     ConsultaVestidoComponent: typeof import('./src/components/Vestido/ConsultaVestidoComponent.vue')['default']
+    FormaPagamentoAutoComplete: typeof import('./src/components/TipoPagamento/FormaPagamentoAutoComplete.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     HomeComponent: typeof import('./src/components/HomeComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SnackBarComponent: typeof import('./src/components/SnackBarComponent.vue')['default']
+    TipoPagamentoAutoComplete: typeof import('./src/components/TipoPagamento/TipoPagamentoAutoComplete.vue')['default']
     VestidoAutoComplete: typeof import('./src/components/Vestido/VestidoAutoComplete.vue')['default']
   }
 }
