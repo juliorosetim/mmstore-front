@@ -97,7 +97,7 @@
       <v-col>
         <v-text-field
           v-model="valor"
-          label="Valor">
+          label="Valor do Pagamento">
         </v-text-field>
       </v-col>
       <v-col>
@@ -120,12 +120,26 @@
       <v-col>
         <v-btn
           prepend-icon="mdi-plus"
-          @click="adicionarPagamento"/>
+          @click="adicionarPagamentoLocal"/>
       </v-col>
     </v-row>
 
     <!-- Grid de Pagamentos -->
-    <v-data-table :items="pagamentos" :headers="headersPagamentos"></v-data-table>
+    <v-data-table :items="locacao.pagamentosLocacao" :headers="headersPagamentos">
+      <template v-slot:item.dtPagamento="{ item }">
+          {{ item.dtPagamento?.toLocaleDateString("pt-BR") }}
+      </template>
+
+
+      <template v-slot:item.vlrPagamento="{ item }">
+          {{ formatCurrency(item.vlrPagamento) }}
+      </template>
+
+      <template v-slot:item.tipoPagamento="{ item }">
+          {{ item.tipoPagamento?.deTipoPagamento }}
+      </template>
+
+    </v-data-table>
 
     <v-row>
       <v-btn
@@ -160,6 +174,8 @@ import LocacaoStore from '@/store/LocacaoStore/LocacaoStore';
 // import Locacao from '@/types/LocacaoVestido/LocacaoVestidoType';
 import TipoPagamentoAutoComplete from '../TipoPagamento/TipoPagamentoAutoComplete.vue';
 import TipoPagamento from '@/types/TipoPagamento/TipoPagamentoType';
+import PagamentoLocacao from '@/types/Pagamento';
+import { format } from "date-fns";
 
   const clienteSelecionado = ref<Cliente | undefined>()
   const vestidoSelecionado = ref<Vestido | null>(null)
@@ -170,20 +186,23 @@ import TipoPagamento from '@/types/TipoPagamento/TipoPagamentoType';
   const { vestido, ClearVestido } = vestidoStore;
 
   const locacaoStore = LocacaoStore();
-  const {vestidosLocacao, locacao, adicionarVestido, adicionarCliente, adicionarTipoPagamento} = locacaoStore;
+  const {vestidosLocacao, locacao, adicionarVestido, adicionarCliente,
+         adicionarTipoPagamento, adicionarPagamento, getdadosLocacao} = locacaoStore;
 
   const cliente = ref(null);
   const dataRetirada = ref(new Date().toISOString().substr(0,10));
   const dataDevolucao = ref(new Date().toISOString().substr(0,10));
   const dataEvento = ref(new Date().toISOString().substr(0,10));
   const vestidosSelecionados = ref([]);
+  //const dataPagamento = ref(new Date().toISOString().substr(0,10));
   const dataPagamento = ref(new Date().toISOString().substr(0,10));
   const valorLocacao = ref('');
-  const valor = ref('');
+  const valor = ref(0);
   const tipoPagamento = ref(null);
   // const opcoesDinheiro = ref(['Dinheiro', 'Cartão']);
   const pagamentos = ref([]);
   // const isLoading = ref(false)
+  const pagamentoLocacao = ref<PagamentoLocacao>()
 
   const headersVestidos = [
     { title: 'Foto', key: 'imgVestidos' },
@@ -193,49 +212,40 @@ import TipoPagamento from '@/types/TipoPagamento/TipoPagamentoType';
   ];
 
   const headersPagamentos = [
-    { title: 'Data', key: 'Data Pgto' },
-    { title: 'Valor', key: 'Valor' },
-    { title: 'Tipo', key: 'tipo' },
+    { title: 'Data', key: 'dtPagamento' },
+    { title: 'Valor', key: 'vlrPagamento' },
+    { title: 'Tipo', key: 'tipoPagamento' },
   ];
+
+  onMounted( () => {
+    // console.log(`montou - ${dataPagamentoLocal}`)
+    // dataPagamento.value = new Date(dataPagamentoLocal)
+  })
 
 
   const getImageUrl = (byteArray: string) => {
-  if (!byteArray) return '';
+    if (!byteArray) return '';
 
-  // Convert base64 string to actual image
-  // If the data is already in base64 format
-  if (byteArray.startsWith('data:image')) {
-    return byteArray;
-  }
+    // Convert base64 string to actual image
+    // If the data is already in base64 format
+    if (byteArray.startsWith('data:image')) {
+      return byteArray;
+    }
 
-  // If the data is a byte array, convert it to base64
-  try {
-    return `data:image/jpeg;base64,${byteArray}`;
-  } catch (error) {
-    console.error('Error converting image:', error);
-    return '';
-  }
-};
-
-  // const adicionarPagamento = () => {
-  //   if (dataPagamento.value && valor.value && tipoPagamento.value) {
-  //     pagamentos.value.push({
-  //       data: dataPagamento.value,
-  //       valor: valor.value,
-  //       tipo: tipoPagamento.value,
-  //     });
-  //     dataPagamento.value = '';
-  //     valor.value = '';
-  //     tipoPagamento.value = null;
-  //   }
-  // };
+    // If the data is a byte array, convert it to base64
+    try {
+      return `data:image/jpeg;base64,${byteArray}`;
+    } catch (error) {
+      console.error('Error converting image:', error);
+      return '';
+    }
+  };
 
   const irParaConsulta = () => {
     router.push({ name: 'ConsultaLocacao' });
   }
 
   const handleClienteSelected = (cliente: Cliente) => {
-
     if (cliente){
       adicionarCliente(cliente)
     }
@@ -248,13 +258,25 @@ import TipoPagamento from '@/types/TipoPagamento/TipoPagamentoType';
     }
   }
 
-
   function adicionarVestidoLocal() {
     if (vestidoSelecionado.value) {
       adicionarVestido(vestidoSelecionado.value);
       vestidoSelecionado.value = null;
     }
   }
+
+   const adicionarPagamentoLocal = () => {
+    pagamentoLocacao.value = {
+      vlrPagamento: valor.value,
+      dtPagamento: new Date(dataPagamento.value),
+      tipoPagamento: { ...tipoPagamentoSelecionado.value }
+    }
+
+    console.log(`pagamentoLocacao.value ${JSON.stringify(pagamentoLocacao.value)}`)
+
+
+    adicionarPagamento(pagamentoLocacao.value)
+   };
 
   const salvarLocacao = () => {
     console.log('Salvando....')
@@ -272,7 +294,9 @@ import TipoPagamento from '@/types/TipoPagamento/TipoPagamentoType';
     console.log(`DtEvento.... ${ JSON.stringify(locacao.dtEvento)}`)
     console.log(`dtRetirada.... ${ JSON.stringify(locacao.dtRetirada)}`)
     console.log(`dtDevolucao.... ${ JSON.stringify(locacao.dtDevolucao)}`)
-    console.log(`tipoPagamento.... ${ JSON.stringify(locacao.pagamentosLocacao)}`)
+    console.log(`pagamento.... ${ JSON.stringify(locacao.pagamentosLocacao)}`)
+
+    console.log(`objeto completo para salvar.... ${ JSON.stringify(locacao)}`)
   }
 
   const formatCurrency = (value) => {

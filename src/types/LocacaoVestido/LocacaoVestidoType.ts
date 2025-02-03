@@ -1,4 +1,5 @@
 import Vestido from '@/types/VestidoType';
+import TipoPagamento from '../TipoPagamento/TipoPagamentoType';
 
 interface Locacao {
   idLocacao: number | null;
@@ -16,7 +17,8 @@ interface Locacao {
     idPagamento?: number;
     vlrPagamento?: number;
     dtPagamento?: Date;
-    tipoPagamento?: { idTipoPagamento: number }
+    //tipoPagamento?: { idTipoPagamento: number }
+    tipoPagamento?: TipoPagamento
   }]
 };
 

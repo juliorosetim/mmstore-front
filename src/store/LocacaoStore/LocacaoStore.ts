@@ -1,6 +1,7 @@
 import LocacaoVestidoService from "@/Service/LoacaoVestido/LocacaoVestidoService";
 import Cliente from "@/types/ClienteType";
 import Locacao from "@/types/LocacaoVestido/LocacaoVestidoType";
+import PagamentoLocacao from "@/types/Pagamento";
 import TipoPagamento from "@/types/TipoPagamento/TipoPagamentoType";
 import Vestido from "@/types/VestidoType";
 import { defineStore } from "pinia";
@@ -52,6 +53,9 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     }
   }
 
+  function getdadosLocacao() {
+    return locacao.value
+  }
 
   function adicionarVestido(vestido: Vestido) {
     locacao.value.locacaoVestido.push({
@@ -76,6 +80,15 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     locacao.value.pagamentosLocacao.push({
       idPagamento: 0,
       tipoPagamento: { idTipoPagamento: tipoPagamento.idTipoPagamento }
+    })
+  }
+
+  function adicionarPagamento(pagamento: PagamentoLocacao) {
+    locacao.value.pagamentosLocacao.push({
+      idPagamento: pagamento.idPagamento,
+      vlrPagamento: pagamento.vlrPagamento,
+      dtPagamento: pagamento.dtPagamento,
+      tipoPagamento: { ...pagamento.tipoPagamento }
     })
   }
 
@@ -107,7 +120,9 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     resetLocacao,
     removerVestido,
     adicionarCliente,
-    adicionarTipoPagamento
+    adicionarTipoPagamento,
+    adicionarPagamento,
+    getdadosLocacao
   }
 
 })

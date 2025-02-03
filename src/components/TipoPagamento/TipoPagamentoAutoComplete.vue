@@ -7,7 +7,7 @@
       @click="handleSearch"
       @focus="showResults = true"
       @blur="handleBlur"
-      label="Buscar Tipo de Pagamento..."
+      label="Tipo de Pagamento"
     />
 
     <div
