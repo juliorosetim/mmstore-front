@@ -40,7 +40,6 @@
       </v-col>
     </v-row>
 
-    <!-- Filtro para adicionar vestido -->
     <v-row>
       <v-col>
         <VestidoAutoComplete
@@ -82,9 +81,9 @@
           size="small"
           @click="locacaoStore.removerVestido(item.vestido.nuVestido)"
         >
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-    </template>
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </template>
     </v-data-table>
 
     <!-- Campo Valor da Locação -->
@@ -103,7 +102,6 @@
       <v-col>
           <TipoPagamentoAutoComplete
             v-model="tipoPagamentoSelecionado"
-            @selected="hanldeTipoPagamentoSelected"
           />
       </v-col>
         <!-- Campo Data do Pagamento -->
@@ -120,12 +118,12 @@
       <v-col>
         <v-btn
           prepend-icon="mdi-plus"
-          @click="adicionarPagamentoLocal"/>
+          @click="adicionarPagamento"/>
       </v-col>
     </v-row>
 
     <!-- Grid de Pagamentos -->
-    <v-data-table :items="locacao.pagamentosLocacao" :headers="headersPagamentos">
+    <v-data-table :items="pagamentos" :headers="headersPagamentos">
       <template v-slot:item.dtPagamento="{ item }">
           {{ item.dtPagamento?.toLocaleDateString("pt-BR") }}
       </template>
@@ -137,6 +135,18 @@
 
       <template v-slot:item.tipoPagamento="{ item }">
           {{ item.tipoPagamento?.deTipoPagamento }}
+      </template>
+
+      <template v-slot:item.actions="{ item }">
+        <v-btn
+          color="error"
+          icon
+          variant="text"
+          size="small"
+          @click="locacaoStore.removerPagamento(item, index)"
+        >
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
       </template>
 
     </v-data-table>
@@ -163,15 +173,12 @@
 <script setup lang="ts">
 import {ref, onMounted } from 'vue';
 import router from '@/routes/index';
-// import axios from 'axios'
-// import ClienteStore from '@/store/ClienteStore';
 import ClienteAutoComplete from '@/components/Cliente/ClienteAutoComplete.vue';
 import VestidoAutoComplete from '../Vestido/VestidoAutoComplete.vue';
 import type Cliente from '@/types/ClienteType'
 import type Vestido from '@/types/VestidoType';
 import VestidoStore from '@/store/VestidoStore';
 import LocacaoStore from '@/store/LocacaoStore/LocacaoStore';
-// import Locacao from '@/types/LocacaoVestido/LocacaoVestidoType';
 import TipoPagamentoAutoComplete from '../TipoPagamento/TipoPagamentoAutoComplete.vue';
 import TipoPagamento from '@/types/TipoPagamento/TipoPagamentoType';
 import PagamentoLocacao from '@/types/Pagamento';
@@ -187,22 +194,17 @@ import { format } from "date-fns";
 
   const locacaoStore = LocacaoStore();
   const {vestidosLocacao, locacao, adicionarVestido, adicionarCliente,
-         adicionarTipoPagamento, adicionarPagamento, getdadosLocacao} = locacaoStore;
+         adicionarTipoPagamento, getdadosLocacao,
+        pagamentos, removerPagamento} = locacaoStore;
 
   const cliente = ref(null);
   const dataRetirada = ref(new Date().toISOString().substr(0,10));
   const dataDevolucao = ref(new Date().toISOString().substr(0,10));
   const dataEvento = ref(new Date().toISOString().substr(0,10));
   const vestidosSelecionados = ref([]);
-  //const dataPagamento = ref(new Date().toISOString().substr(0,10));
   const dataPagamento = ref(new Date().toISOString().substr(0,10));
   const valorLocacao = ref('');
   const valor = ref(0);
-  const tipoPagamento = ref(null);
-  // const opcoesDinheiro = ref(['Dinheiro', 'Cartão']);
-  const pagamentos = ref([]);
-  // const isLoading = ref(false)
-  const pagamentoLocacao = ref<PagamentoLocacao>()
 
   const headersVestidos = [
     { title: 'Foto', key: 'imgVestidos' },
@@ -215,6 +217,7 @@ import { format } from "date-fns";
     { title: 'Data', key: 'dtPagamento' },
     { title: 'Valor', key: 'vlrPagamento' },
     { title: 'Tipo', key: 'tipoPagamento' },
+    { title: '', key: 'actions' },
   ];
 
   onMounted( () => {
@@ -226,13 +229,10 @@ import { format } from "date-fns";
   const getImageUrl = (byteArray: string) => {
     if (!byteArray) return '';
 
-    // Convert base64 string to actual image
-    // If the data is already in base64 format
     if (byteArray.startsWith('data:image')) {
       return byteArray;
     }
 
-    // If the data is a byte array, convert it to base64
     try {
       return `data:image/jpeg;base64,${byteArray}`;
     } catch (error) {
@@ -251,13 +251,6 @@ import { format } from "date-fns";
     }
   }
 
-  const hanldeTipoPagamentoSelected = (tipoPagamento: TipoPagamento) => {
-
-    if (tipoPagamento){
-      adicionarTipoPagamento(tipoPagamento)
-    }
-  }
-
   function adicionarVestidoLocal() {
     if (vestidoSelecionado.value) {
       adicionarVestido(vestidoSelecionado.value);
@@ -265,17 +258,16 @@ import { format } from "date-fns";
     }
   }
 
-   const adicionarPagamentoLocal = () => {
+  const adicionarPagamento = () => {
+    const pagamentoLocacao = ref<PagamentoLocacao>()
+
     pagamentoLocacao.value = {
       vlrPagamento: valor.value,
       dtPagamento: new Date(dataPagamento.value),
       tipoPagamento: { ...tipoPagamentoSelecionado.value }
     }
 
-    console.log(`pagamentoLocacao.value ${JSON.stringify(pagamentoLocacao.value)}`)
-
-
-    adicionarPagamento(pagamentoLocacao.value)
+    pagamentos.value.push(pagamentoLocacao.value)
    };
 
   const salvarLocacao = () => {
@@ -294,7 +286,7 @@ import { format } from "date-fns";
     console.log(`DtEvento.... ${ JSON.stringify(locacao.dtEvento)}`)
     console.log(`dtRetirada.... ${ JSON.stringify(locacao.dtRetirada)}`)
     console.log(`dtDevolucao.... ${ JSON.stringify(locacao.dtDevolucao)}`)
-    console.log(`pagamento.... ${ JSON.stringify(locacao.pagamentosLocacao)}`)
+    console.log(`pagamento.... ${ JSON.stringify(pagamentos.value)}`)
 
     console.log(`objeto completo para salvar.... ${ JSON.stringify(locacao)}`)
   }

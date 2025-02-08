@@ -29,6 +29,9 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
   // const locacaoLocal = ref<Locacao>();
   // const locacao = computed(() => locacaoLocal);
 
+  const pagamentoList = ref<PagamentoLocacao[]>([])
+  const pagamentos = computed(() => pagamentoList)
+
   const locacao = ref<Locacao>({
     idLocacao: null,
     dtRetirada: '',
@@ -37,8 +40,7 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     vlrAluguel: 0,
     observacao: '',
     cliente: { idCliente: 0, nmCliente: '' },
-    locacaoVestido: [],
-    pagamentosLocacao: []
+    locacaoVestido: []
   });
 
   const getLocacaoes = async (page: number, itemsPerPage: number) => {
@@ -76,20 +78,26 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     }
   }
 
-  function adicionarTipoPagamento(tipoPagamento: TipoPagamento) {
-    locacao.value.pagamentosLocacao.push({
-      idPagamento: 0,
-      tipoPagamento: { idTipoPagamento: tipoPagamento.idTipoPagamento }
-    })
-  }
 
-  function adicionarPagamento(pagamento: PagamentoLocacao) {
-    locacao.value.pagamentosLocacao.push({
-      idPagamento: pagamento.idPagamento,
-      vlrPagamento: pagamento.vlrPagamento,
-      dtPagamento: pagamento.dtPagamento,
-      tipoPagamento: { ...pagamento.tipoPagamento }
-    })
+  // function adicionarPagamento(pagamento: PagamentoLocacao) {
+  //   locacao.value.pagamentosLocacao.push({
+  //     idPagamento: pagamento.idPagamento,
+  //     vlrPagamento: pagamento.vlrPagamento,
+  //     dtPagamento: pagamento.dtPagamento,
+  //     tipoPagamento: { ...pagamento.tipoPagamento }
+  //   })
+  // }
+
+  function removerPagamento(item: PagamentoLocacao, index: number) {
+    if (item.idPagamento) {
+      //pagamentos.value.
+      // implementar para remover do banco de dados
+    } else {
+      pagamentoList.value.splice(index, 1);
+    }
+
+    // pagamentos.value = pagamentos.value
+    //   .filter(item => item.idPagamento !== idPagamento);
   }
 
   function resetLocacao() {
@@ -104,8 +112,7 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
         idCliente: 0,
         nmCliente: ''
       },
-      locacaoVestido: [],
-      pagamentosLocacao: []
+      locacaoVestido: []
     };
   }
 
@@ -120,9 +127,9 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     resetLocacao,
     removerVestido,
     adicionarCliente,
-    adicionarTipoPagamento,
-    adicionarPagamento,
-    getdadosLocacao
+    removerPagamento,
+    getdadosLocacao,
+    pagamentos
   }
 
 })
