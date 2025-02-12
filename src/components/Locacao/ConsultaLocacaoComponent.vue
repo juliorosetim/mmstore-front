@@ -81,8 +81,8 @@
   import {ref, onMounted } from 'vue';
   import router from '@/routes/index';
   import LocacaoStore from '@/store/LocacaoStore/LocacaoStore';
-import Locacao from '@/types/LocacaoVestido/LocacaoVestidoType';
-import moment from 'moment';
+  import Locacao from '@/types/LocacaoVestido/LocacaoVestidoType';
+  import moment from 'moment';
 
   const nomePesquisa = ref<string>('');
 

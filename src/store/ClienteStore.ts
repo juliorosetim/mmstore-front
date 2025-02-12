@@ -20,7 +20,7 @@ export const ClienteStore = defineStore("ClienteStore", () => {
   const clientes = computed(() => clienteList);
 
   const cliente = computed(() => clienteLocal);
-  const clienteLocal = ref<Cliente> ({
+  const clienteLocal = ref<Cliente>({
     idCliente: null,
     nmCliente: '',
     numero: '',
@@ -56,13 +56,13 @@ export const ClienteStore = defineStore("ClienteStore", () => {
 
   const GetClientes = async (page: number, itemsPerPage: number) => {
     try {
-        const response = await ClienteService.findAllClientes(page, itemsPerPage);
+      const response = await ClienteService.findAllClientes(page, itemsPerPage);
 
-        clienteList.value = response.content;
-        totalElementsLocal.value = response.totalElements;
-        totalPagesLocal.value = response.totalPages;
+      clienteList.value = response.content;
+      totalElementsLocal.value = response.totalElements;
+      totalPagesLocal.value = response.totalPages;
     } catch (error) {
-        console.error("Erro ao buscar clientes: ", error);
+      console.error("Erro ao buscar clientes: ", error);
     }
   };
 
@@ -70,13 +70,13 @@ export const ClienteStore = defineStore("ClienteStore", () => {
     clienteLocal.value = clientePar;
   }
 
-  const GetClientesByNmCliente = async (nmCliente:string, page: number, itemsPerPage: number) => {
+  const GetClientesByNmCliente = async (nmCliente: string, page: number, itemsPerPage: number) => {
     try {
-        const response = await ClienteService.findByNmCliente(nmCliente, pagination.value.page,
-                                                              pagination.value.itemsPerPage );
-        clienteList.value = response;
+      const response = await ClienteService.findByNmCliente(nmCliente, pagination.value.page,
+        pagination.value.itemsPerPage);
+      clienteList.value = response;
     } catch (error) {
-        console.error("Erro ao buscar clientes: ", error);
+      console.error("Erro ao buscar clientes: ", error);
     }
   };
 
@@ -92,14 +92,14 @@ export const ClienteStore = defineStore("ClienteStore", () => {
   // }
 
   const deleteCliente = async (idCliente: number) => {
-    try{
-        const response = await ClienteService.deleteCliente(idCliente);
+    try {
+      const response = await ClienteService.deleteCliente(idCliente);
 
-        clienteList.value = response.content;
-        totalElementsLocal.value = response.totalElements;
-        totalPagesLocal.value = response.totalPages;
+      clienteList.value = response.content;
+      totalElementsLocal.value = response.totalElements;
+      totalPagesLocal.value = response.totalPages;
 
-    } catch(error) {
+    } catch (error) {
       console.log('Erro ao excluir Cliente.')
     }
   }

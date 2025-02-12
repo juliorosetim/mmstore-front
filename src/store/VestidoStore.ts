@@ -3,7 +3,6 @@ import { computed, ref } from "vue";
 import Vestido from "@/types/VestidoType";
 import VestidoService from "@/Service/VestidoService"
 
-
 export const VestidoStore = defineStore("VestidoStore", () => {
 
   const pagination = ref({
@@ -24,7 +23,7 @@ export const VestidoStore = defineStore("VestidoStore", () => {
 
   const vestidoLocal = ref<Vestido>({
     idVestido: null,
-    flSituacao: '',
+    flSituacao: 'A',
     nuVestido: '',
     vlrVestido: 0,
     imgVestidos: [{ idImgVestido: null, imgVestido: null }],
@@ -64,7 +63,7 @@ export const VestidoStore = defineStore("VestidoStore", () => {
   const ClearVestido = () => {
     vestidoLocal.value = {
       idVestido: null,
-      flSituacao: '',
+      flSituacao: 'A',
       nuVestido: '',
       vlrVestido: 0,
       imgVestidos: [{ idVestido: null, imgVestido: null }],
