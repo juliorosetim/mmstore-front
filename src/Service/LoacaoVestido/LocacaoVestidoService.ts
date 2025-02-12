@@ -34,6 +34,38 @@ class LocacaoVestidoService {
     return response;
   }
 
+  public async salvarLocacao(locacao: Locacao): Promise<Response<Locacao>> {
+    const response: Response<Locacao> = {
+      hasError: false
+    }
+
+    try {
+      console.log(`Cadastrando locação ${JSON.stringify(locacao)}`)
+
+      const { data } = await axios.post(`${url_base}`, locacao, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      response.content = data.content
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.message) {
+        response.error = {
+          message: error.response.data.message,
+          code: error.response.status,
+          type: error.response.data.error,
+        };
+      } else {
+        response.error = { message: error.message };
+      }
+
+      response.hasError = true;
+    }
+
+    return response
+  }
+
 }
 
 export default new LocacaoVestidoService;

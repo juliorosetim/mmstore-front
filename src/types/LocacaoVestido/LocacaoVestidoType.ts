@@ -1,5 +1,6 @@
 import Vestido from '@/types/VestidoType';
 import TipoPagamento from '../TipoPagamento/TipoPagamentoType';
+import PagamentoLocacao from '../Pagamento';
 
 interface Locacao {
   idLocacao: number | null;
@@ -9,17 +10,12 @@ interface Locacao {
   vlrAluguel: number;
   observacao: string;
   cliente: { idCliente: number; nmCliente: string };
-  locacaoVestido: [{
+  locacoesVestido: [{
     idLocacaoVestido: number;
-    vestido: Vestido
+    idLocacao: number;
+    vestido: Vestido;
   }];
-  pagamentosLocacao: [{
-    idPagamento?: number;
-    vlrPagamento?: number;
-    dtPagamento?: Date;
-    //tipoPagamento?: { idTipoPagamento: number }
-    tipoPagamento?: TipoPagamento
-  }]
+  pagamentosLocacao: PagamentoLocacao[]
 };
 
 export default Locacao;

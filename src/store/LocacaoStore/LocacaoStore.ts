@@ -40,7 +40,8 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     vlrAluguel: 0,
     observacao: '',
     cliente: { idCliente: 0, nmCliente: '' },
-    locacaoVestido: []
+    pagamentosLocacao: [],
+    locacoesVestido: [],
   });
 
   const getLocacaoes = async (page: number, itemsPerPage: number) => {
@@ -60,14 +61,15 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
   }
 
   function adicionarVestido(vestido: Vestido) {
-    locacao.value.locacaoVestido.push({
-      idLocacaoVestido: Date.now(), // temporário, deve vir do backend
+    locacao.value.locacoesVestido.push({
+      idLocacaoVestido: 0, // temporário, deve vir do backend
+      idLocacao: 0,
       vestido: vestido
     });
   }
 
   function removerVestido(nuVestido: string) {
-    locacao.value.locacaoVestido = locacao.value.locacaoVestido
+    locacao.value.locacoesVestido = locacao.value.locacoesVestido
       .filter(item => item.vestido.nuVestido !== nuVestido);
   }
 
@@ -112,8 +114,18 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
         idCliente: 0,
         nmCliente: ''
       },
-      locacaoVestido: []
+      locacoesVestido: []
     };
+  }
+
+  async function salvarLocacao() {
+    try {
+      const response = await LocacaoVestidoService.salvarLocacao(locacao.value)
+
+      return response.content;
+    } catch (error) {
+      console.log(`Erro ao salvar locação ${error}`)
+    }
   }
 
   return {
@@ -129,7 +141,8 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     adicionarCliente,
     removerPagamento,
     getdadosLocacao,
-    pagamentos
+    pagamentos,
+    salvarLocacao
   }
 
 })

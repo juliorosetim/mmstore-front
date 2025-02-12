@@ -1,14 +1,11 @@
 <template>
   <v-container>
 
-    <!-- Campo Cliente -->
     <ClienteAutoComplete
       v-model="clienteSelecionado"
       @selected="handleClienteSelected"
     />
 
-
-  <!-- Campos de Data -->
     <v-row>
       <v-col>
         <v-text-field
@@ -41,20 +38,23 @@
     </v-row>
 
     <v-row>
-      <v-col>
+      <v-col cols="11">
         <VestidoAutoComplete
           v-model="vestidoSelecionado"
         />
+
       </v-col>
-      <v-col>
+      <v-col class="d-flex justify-end">
         <v-btn
-          prepend-icon="mdi-plus" @click="adicionarVestidoLocal"
+          size="54"
+          prepend-icon="mdi-plus"
+          @click="adicionarVestidoLocal"
         />
       </v-col>
     </v-row>
     <!-- Grid de Vestidos -->
     <v-data-table
-      :items="locacao.locacaoVestido"
+      :items="locacao.locacoesVestido"
       :headers="headersVestidos">
       <template v-slot:item.imgVestidos="{ item }">
         <v-img
@@ -104,19 +104,19 @@
             v-model="tipoPagamentoSelecionado"
           />
       </v-col>
-        <!-- Campo Data do Pagamento -->
-      <v-col>
+
+      <v-col class="d-flex justify-space-between">
         <v-text-field
           v-model="dataPagamento"
           label="Data do Pagamento"
           type="date"
           placeholder="dd/mm/aaaa"
+          class="mr-1"
           >
         </v-text-field>
-      </v-col>
 
-      <v-col>
         <v-btn
+          size="54"
           prepend-icon="mdi-plus"
           @click="adicionarPagamento"/>
       </v-col>
@@ -153,7 +153,7 @@
 
     <v-row>
       <v-btn
-        @click="salvarLocacao"
+        @click="salvarLocacaoLocal"
         prepend-icon="mdi-plus"
         >
           Salvar
@@ -195,7 +195,7 @@ import { format } from "date-fns";
   const locacaoStore = LocacaoStore();
   const {vestidosLocacao, locacao, adicionarVestido, adicionarCliente,
          adicionarTipoPagamento, getdadosLocacao,
-        pagamentos, removerPagamento} = locacaoStore;
+        pagamentos, removerPagamento, salvarLocacao} = locacaoStore;
 
   const cliente = ref(null);
   const dataRetirada = ref(new Date().toISOString().substr(0,10));
@@ -203,7 +203,7 @@ import { format } from "date-fns";
   const dataEvento = ref(new Date().toISOString().substr(0,10));
   const vestidosSelecionados = ref([]);
   const dataPagamento = ref(new Date().toISOString().substr(0,10));
-  const valorLocacao = ref('');
+  const valorLocacao = ref(0);
   const valor = ref(0);
 
   const headersVestidos = [
@@ -270,25 +270,44 @@ import { format } from "date-fns";
     pagamentos.value.push(pagamentoLocacao.value)
    };
 
-  const salvarLocacao = () => {
+  const salvarLocacaoLocal = () => {
     console.log('Salvando....')
 
     locacao.dtEvento = dataEvento.value;
     locacao.dtRetirada = dataRetirada.value;
     locacao.dtDevolucao = dataDevolucao.value;
+    locacao.pagamentosLocacao = pagamentos.value
+    locacao.vlrAluguel = valorLocacao.value;
 
-    locacao.locacaoVestido.forEach(l => {
-      console.log(`Vestido.... ${ JSON.stringify(l.vestido.nuVestido)}`)
-    })
 
-    console.log(`Cliente.... ${ JSON.stringify(locacao.cliente)}`)
+    locacao.locacoesVestido = locacao.locacoesVestido.map(lv => ({
+      ...lv, // Mantém os outros dados do locacaoVestido
+      vestido: {
+        idVestido: lv.vestido.idVestido,
+        nuVestido: lv.vestido.nuVestido,
+        vlrVestido: lv.vestido.vlrVestido,
+        flSituacao: lv.vestido.flSituacao,
+        cor: lv.vestido.cor
+      }
+    }));
 
-    console.log(`DtEvento.... ${ JSON.stringify(locacao.dtEvento)}`)
-    console.log(`dtRetirada.... ${ JSON.stringify(locacao.dtRetirada)}`)
-    console.log(`dtDevolucao.... ${ JSON.stringify(locacao.dtDevolucao)}`)
-    console.log(`pagamento.... ${ JSON.stringify(pagamentos.value)}`)
 
-    console.log(`objeto completo para salvar.... ${ JSON.stringify(locacao)}`)
+    console.log(`locacao manupulada ${JSON.stringify(locacao)}`)
+
+    salvarLocacao();
+
+    // locacao.locacaoVestido.forEach(l => {
+    //   console.log(`Vestido.... ${ JSON.stringify(l.vestido.nuVestido)}`)
+    // })
+
+    // console.log(`Cliente.... ${ JSON.stringify(locacao.cliente)}`)
+
+    // console.log(`DtEvento.... ${ JSON.stringify(locacao.dtEvento)}`)
+    // console.log(`dtRetirada.... ${ JSON.stringify(locacao.dtRetirada)}`)
+    // console.log(`dtDevolucao.... ${ JSON.stringify(locacao.dtDevolucao)}`)
+    // console.log(`pagamento.... ${ JSON.stringify(pagamentos.value)}`)
+
+    // console.log(`objeto completo para salvar.... ${ JSON.stringify(locacao)}`)
   }
 
   const formatCurrency = (value) => {
