@@ -102,6 +102,8 @@
 
   const {
     getLocacaoes,
+    getLocacaoById,
+    resetLocacao,
     totalElements,
     totalPages,
     locacoes
@@ -130,8 +132,7 @@
 
 
   const irParaNovoCadastro = () => {
-    //clearCliente();
-
+    resetLocacao();
     router.push({ name: 'CadastroLocacao' });
   }
 
@@ -144,8 +145,11 @@
   });
 
 
-  const editarCadastro = (locacao: Locacao) => {
-    //SetCliente(cliente);
+  const editarCadastro = async (locacao: Locacao) => {
+    const locacaoLocal1 = await getLocacaoById(locacao.idLocacao!);
+
+    console.log('getLocacaoById Tela', locacaoLocal1)
+
     irParaEdicaoDeCadastro();
   }
 
@@ -162,14 +166,12 @@
     return '';
   }
 
-  // Verifica se o formato da data é uma string ou Date e converte adequadamente
   const dataMoment = moment(data);
 
-  // Verifica se o momento é válido antes de formatar
   if (dataMoment.isValid()) {
     return dataMoment.format('DD/MM/YYYY');
   } else {
-    return ''; // Retorna string vazia caso a data seja inválida
+    return '';
   }
 };
 

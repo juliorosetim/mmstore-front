@@ -3,6 +3,8 @@ import axios from "axios";
 import { Response } from "../Rest";
 
 const url_base = 'http://localhost:8089/api/locacao';
+const url_locacao_vestido = 'http://localhost:8089/api/locacaoVestido';
+
 
 class LocacaoVestidoService {
 
@@ -30,6 +32,35 @@ class LocacaoVestidoService {
 
       response.hasError = true;
     }
+
+    return response;
+  }
+
+  public async findAllLocacaoById(idLocacao: number): Promise<Response<Locacao[]>> {
+    const response: Response<Locacao[]> = {
+      hasError: false
+    }
+
+    try {
+      const data = await axios.get(`${url_base}/${idLocacao}`);
+
+      response.content = data.data;
+
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.message) {
+        response.error = {
+          message: error.response.data.message,
+          code: error.response.status,
+          type: error.response.data.error,
+        };
+      } else {
+        response.error = { message: error.message };
+      }
+
+      response.hasError = true;
+    }
+
+    console.log('getLocacaoById Service', response)
 
     return response;
   }
@@ -64,6 +95,33 @@ class LocacaoVestidoService {
     }
 
     return response
+  }
+
+  public async deleteVestidoByLocacaoVestidoId(idLocacaoVestido: number): Promise<Response<Locacao[]>> {
+    const response: Response<Locacao[]> = {
+      hasError: false
+    }
+
+    try {
+      await axios.delete(`${url_locacao_vestido}/${idLocacaoVestido}`);
+
+      //response.content = data.data;
+
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.message) {
+        response.error = {
+          message: error.response.data.message,
+          code: error.response.status,
+          type: error.response.data.error,
+        };
+      } else {
+        response.error = { message: error.message };
+      }
+
+      response.hasError = true;
+    }
+
+    return response;
   }
 
 }

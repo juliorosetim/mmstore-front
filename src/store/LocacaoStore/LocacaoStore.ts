@@ -56,6 +56,20 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
     }
   }
 
+  const getLocacaoById = async (idLocacao: number) => {
+    try {
+      const response = await LocacaoVestidoService.findAllLocacaoById(idLocacao);
+
+      if (response.content) {
+        locacao.value = response.content;
+      } else {
+        console.error("Response content is empty");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar Locações: ", error);
+    }
+  };
+
   function getdadosLocacao() {
     return locacao.value
   }
@@ -69,8 +83,21 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
   }
 
   function removerVestido(nuVestido: string) {
-    locacao.value.locacoesVestido = locacao.value.locacoesVestido
-      .filter(item => item.vestido.nuVestido !== nuVestido);
+
+    const locacaoEncontrada = locacao.value.locacoesVestido
+      .filter(item => item.vestido.nuVestido == nuVestido);
+
+    if (locacaoEncontrada.length > 0 && locacaoEncontrada[0].idLocacaoVestido) {
+      const idLocacaoVestido = locacaoEncontrada[0].idLocacaoVestido;
+
+      LocacaoVestidoService.deleteVestidoByLocacaoVestidoId(idLocacaoVestido)
+
+      locacao.value.locacoesVestido = locacao.value.locacoesVestido
+        .filter(item => item.vestido.nuVestido !== nuVestido);
+    } else {
+      locacao.value.locacoesVestido = locacao.value.locacoesVestido
+        .filter(item => item.vestido.nuVestido !== nuVestido);
+    }
   }
 
   function adicionarCliente(cliente: Cliente) {
@@ -110,11 +137,9 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
       dtEvento: '',
       vlrAluguel: 0,
       observacao: '',
-      cliente: {
-        idCliente: 0,
-        nmCliente: ''
-      },
-      locacoesVestido: []
+      cliente: { idCliente: 0, nmCliente: '' },
+      pagamentosLocacao: [],
+      locacoesVestido: [],
     };
   }
 
@@ -130,6 +155,7 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
 
   return {
     getLocacaoes,
+    getLocacaoById,
     totalElements,
     totalPages,
     locacoes,
