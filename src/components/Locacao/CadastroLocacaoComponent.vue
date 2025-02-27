@@ -89,8 +89,18 @@
     <!-- Campo Valor da Locação -->
     <v-text-field
       v-model="valorLocacao"
-      label="Valor da Locação">
+      label="Valor da Locação"
+      v-currency-input="options"
+      prefix="R$"
+      >
     </v-text-field>
+
+    <VCurrencyField
+      label="Valor da Locação 1"
+      v-model="valorLocacao"
+      v-currency-input="options"
+      >
+    </VCurrencyField>
 
     <v-row>
       <v-col>
@@ -167,11 +177,28 @@
       </v-btn>
     </v-row>
 
+    <v-snackbar
+      rounded="pill"
+      :timeout="2000"
+      v-model="snackBar.show"
+      :color="snackBar.color"
+      close-on-content-click="true"
+      >
+        {{ snackBar.msg }}
+
+        <template v-slot:actions>
+          <v-btn variant="text">
+            fechar
+          </v-btn>
+        </template>
+
+    </v-snackbar>
+
   </v-container>
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted } from 'vue';
+import {ref, onMounted, reactive} from 'vue';
 import router from '@/routes/index';
 import ClienteAutoComplete from '@/components/Cliente/ClienteAutoComplete.vue';
 import VestidoAutoComplete from '../Vestido/VestidoAutoComplete.vue';
@@ -183,6 +210,31 @@ import TipoPagamentoAutoComplete from '../TipoPagamento/TipoPagamentoAutoComplet
 import TipoPagamento from '@/types/TipoPagamento/TipoPagamentoType';
 import PagamentoLocacao from '@/types/Pagamento';
 import { format } from "date-fns";
+import { useCurrencyInput } from 'vue-currency-input'
+
+const snackBar = ref({
+    show: false,
+    msg: "",
+    color: "",
+    timeout: "'2000'",
+    closeOnClick: true
+  });
+
+
+  const options = {
+    "currency": "BRL",
+    "currencyDisplay": "symbol",
+    "precision": 2,
+    "hideCurrencySymbolOnFocus": true,
+    "hideGroupingSeparatorOnFocus": true,
+    "hideNegligibleDecimalDigitsOnFocus": true,
+    "autoDecimalDigits": false,
+    "useGrouping": true,
+    "accountingSign": false
+  }
+
+  // Registrar a diretiva
+  const { vCurrencyInput } = useCurrencyInput(options)
 
   const clienteSelecionado = ref<Cliente | undefined>()
   const vestidoSelecionado = ref<Vestido | null>(null)
@@ -195,7 +247,7 @@ import { format } from "date-fns";
   const locacaoStore = LocacaoStore();
   const {vestidosLocacao, locacao, adicionarVestido, adicionarCliente,
          adicionarTipoPagamento, getdadosLocacao,
-        pagamentos, removerPagamento, salvarLocacao} = locacaoStore;
+        pagamentos, removerPagamento, salvarLocacao, getLocacaoById} = locacaoStore;
 
   const cliente = ref(null);
   const dataRetirada = ref(new Date().toISOString().substr(0,10));
@@ -221,8 +273,35 @@ import { format } from "date-fns";
   ];
 
   onMounted( () => {
-    // console.log(`montou - ${dataPagamentoLocal}`)
-    // dataPagamento.value = new Date(dataPagamentoLocal)
+    clienteSelecionado.value = {
+      idCliente: locacao.cliente.idCliente,
+      nmCliente: locacao.cliente.nmCliente,
+      cpfCnpj: '',
+      emprego: '',
+      celular: '',
+      contato: '',
+      rua: '',
+      bairro: '',
+      cep: '',
+      numero: '',
+      cidade: '',
+      nmContato: '',
+      complementoEnd: '',
+      flAtivo: '',
+    }
+
+    dataEvento.value = locacao.dtEvento;
+    dataRetirada.value = locacao.dtRetirada;
+    dataDevolucao.value = locacao.dtDevolucao;
+
+    pagamentos.value = []
+
+    locacao.pagamentosLocacao.forEach(pgto => {
+      pgto.dtPagamento = new Date(pgto.dtPagamento);
+      pagamentos.value.push(pgto);
+    });
+
+    valorLocacao.value = locacao.vlrAluguel;
   })
 
 
@@ -253,7 +332,32 @@ import { format } from "date-fns";
 
   function adicionarVestidoLocal() {
     if (vestidoSelecionado.value) {
+      console.log('vestidoSelecionado.value', vestidoSelecionado.value.nuVestido)
+
+      locacao.locacoesVestido.forEach( item => {
+        console.log('locacao.locacoesVestido', item.vestido.nuVestido)
+        console.log('vestido inserido 1 ', vestidoSelecionado.value.nuVestido == item.vestido.nuVestido )
+      })
+
+      const vestidoInserido: Vestido[] = locacao.locacoesVestido
+        .filter(item => item.vestido.nuVestido == vestidoSelecionado.value!.nuVestido);
+
+      if (vestidoInserido.length > 0) {
+        snackBar.value.msg = 'Vestido já foi adicionado a locação.'
+        snackBar.value.color = "#d11e48";
+        snackBar.value.show = true;
+        return
+      }
+
       adicionarVestido(vestidoSelecionado.value);
+
+      const totalLocacao = locacao.locacoesVestido.reduce((acumulador, item) => {
+        return acumulador + item.vestido.vlrVestido
+      }, 0)
+
+      valorLocacao.value = totalLocacao;
+
+
       vestidoSelecionado.value = null;
     }
   }
@@ -271,7 +375,12 @@ import { format } from "date-fns";
    };
 
   const salvarLocacaoLocal = () => {
-    console.log('Salvando....')
+
+    if (!validaValores()) {
+      snackBar.value.msg = 'Valor recebido é menor que o valor da locação.'
+      snackBar.value.color = "#d11e48";
+      snackBar.value.show = true;
+    }
 
     locacao.dtEvento = dataEvento.value;
     locacao.dtRetirada = dataRetirada.value;
@@ -292,7 +401,7 @@ import { format } from "date-fns";
     }));
 
 
-    console.log(`locacao manupulada ${JSON.stringify(locacao)}`)
+    //console.log(`locacao manupulada ${JSON.stringify(locacao)}`)
 
     salvarLocacao();
 
@@ -308,6 +417,22 @@ import { format } from "date-fns";
     // console.log(`pagamento.... ${ JSON.stringify(pagamentos.value)}`)
 
     // console.log(`objeto completo para salvar.... ${ JSON.stringify(locacao)}`)
+  }
+
+  function validaValores(): boolean {
+    const totalLocacao = locacao.locacoesVestido.reduce((acumulador, item) => {
+        return acumulador + item.vestido.vlrVestido
+      }, 0)
+
+      const totalPagamento = locacao.pagamentosLocacao.reduce((acumulador, item) => {
+        return acumulador + item.vlrPagamento
+      }, 0)
+
+      if (totalPagamento < totalLocacao) {
+        return false;
+      }
+
+      return true
   }
 
   const formatCurrency = (value) => {
@@ -337,7 +462,6 @@ import { format } from "date-fns";
   // const fetchClientes = async () => {
   //   await GetClientes(pagination.value.page, pagination.value.itemsPerPage);
   // }
-
 
 </script>
 

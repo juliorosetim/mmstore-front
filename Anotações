@@ -1,7 +1,7 @@
 Node 20.15.0
 
 Yarn
-    npm install -g yarn
+npm install -g yarn
 
 
 Vuetify
@@ -15,3 +15,4 @@ pinia -> npm i pinia
 eslint -> npm init @eslint/config@latest
 
 material design icons -> npm install @mdi/js @jamescoyle/vue-icon
+
