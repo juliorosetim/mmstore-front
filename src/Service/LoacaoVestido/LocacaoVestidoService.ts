@@ -1,9 +1,11 @@
 import Locacao from "@/types/LocacaoVestido/LocacaoVestidoType";
 import axios from "axios";
 import { Response } from "../Rest";
+import PagamentoLocacao from "@/types/Pagamento";
 
 const url_base = 'http://localhost:8089/api/locacao';
 const url_locacao_vestido = 'http://localhost:8089/api/locacaoVestido';
+const url_pagamento_locacao = 'http://localhost:8089/api/pagamento-locacao';
 
 
 class LocacaoVestidoService {
@@ -120,6 +122,60 @@ class LocacaoVestidoService {
 
       response.hasError = true;
     }
+
+    return response;
+  }
+
+  public async deletePagamentoLocacaoById(idPagamentoLocacao: number): Promise<Response<Locacao[]>> {
+    const response: Response<Locacao[]> = {
+      hasError: false
+    }
+
+    try {
+      await axios.delete(`${url_pagamento_locacao}/${idPagamentoLocacao}`);
+
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.message) {
+        response.error = {
+          message: error.response.data.message,
+          code: error.response.status,
+          type: error.response.data.error,
+        };
+      } else {
+        response.error = { message: error.message };
+      }
+
+      response.hasError = true;
+    }
+
+    return response;
+  }
+
+  public async getPagamentosLocacaoByIdLocacao(idLocacao: number): Promise<Response<PagamentoLocacao[]>> {
+    const response: Response<PagamentoLocacao[]> = {
+      hasError: false
+    }
+
+    try {
+      const data = await axios.get(`${url_pagamento_locacao}/${idLocacao}`);
+
+      response.content = data.data;
+
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.message) {
+        response.error = {
+          message: error.response.data.message,
+          code: error.response.status,
+          type: error.response.data.error,
+        };
+      } else {
+        response.error = { message: error.message };
+      }
+
+      response.hasError = true;
+    }
+
+    console.log('getLocacaoById Service', response)
 
     return response;
   }

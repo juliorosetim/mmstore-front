@@ -138,7 +138,6 @@
           {{ item.dtPagamento?.toLocaleDateString("pt-BR") }}
       </template>
 
-
       <template v-slot:item.vlrPagamento="{ item }">
           {{ formatCurrency(item.vlrPagamento) }}
       </template>
@@ -147,13 +146,13 @@
           {{ item.tipoPagamento?.deTipoPagamento }}
       </template>
 
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:item.actions="{ item, index }">
         <v-btn
           color="error"
           icon
           variant="text"
           size="small"
-          @click="locacaoStore.removerPagamento(item, index)"
+          @click="locacaoStore.removerPagamento(item.idPagamento, index)"
         >
           <v-icon>mdi-delete</v-icon>
         </v-btn>
