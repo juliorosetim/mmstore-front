@@ -109,26 +109,14 @@ export const LocacaoStore = defineStore("LocacaoStore", () => {
 
   function removerPagamento(idPagamento: number, index: number) {
     if (idPagamento) {
-      console.log('Pagamento Salvo removido: ', idPagamento)
-
-      pagamentoList.value.forEach(item => {
-        console.log("Pagamento", item.idPagamento)
-      })
-
       LocacaoVestidoService.deletePagamentoLocacaoById(idPagamento)
 
       pagamentoList.value.splice(index, 1);
       locacao.value.pagamentosLocacao = pagamentoList.value;
     } else {
-      console.log('Pagamento sem ser Salvo removido: ', index)
-
       pagamentoList.value.splice(index, 1);
       locacao.value.pagamentosLocacao = pagamentoList.value;
     }
-
-    pagamentoList.value.forEach(item => {
-      console.log("teste", item.vlrPagamento)
-    })
   }
 
   function resetLocacao() {

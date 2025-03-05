@@ -115,24 +115,24 @@ const selectedFile = ref<File | null>(null);
 const imageId = ref<number | null | undefined>(null);
 
 const initImgVestido = () => {
-  if (!vestido.value.imgVestidos) {
-    vestido.value.imgVestidos = [{}];
-  } else if (!vestido.value.imgVestidos[0]) {
-    vestido.value.imgVestidos[0] = {};
+  if (!vestido.value.imgVestido) {
+    vestido.value.imgVestido = [{}];
+  } else if (!vestido.value.imgVestido[0]) {
+    vestido.value.imgVestido[0] = {};
   }
 };
 
 onMounted(() => {
   initImgVestido();
-  if (!vestido.value.imgVestidos) {
-    vestido.value.imgVestidos = [{}];
+  if (!vestido.value.imgVestido) {
+    vestido.value.imgVestido = [{}];
   }
 
-  if ((vestido.value) && (vestido.value.imgVestidos[0] != undefined)) {
-    imageUrl.value = `data:image/jpeg;base64,${vestido.value.imgVestidos[0].imgVestido}`;
-    imageId.value = vestido.value.imgVestidos[0].idImgVestido;
+  if ((vestido.value) && (vestido.value.imgVestido[0] != undefined)) {
+    imageUrl.value = `data:image/jpeg;base64,${vestido.value.imgVestido[0].imgVestido}`;
+    imageId.value = vestido.value.imgVestido[0].idImgVestido;
 
-    //console.log(JSON.stringify(vestido.value.imgVestidos[0]))
+    //console.log(JSON.stringify(vestido.value.imgVestido[0]))
   }
 });
 
@@ -166,14 +166,14 @@ const setImgVestidoToObjectSave = () => {
     reader.onloadend = async () => {
       const base64String = reader.result?.toString().replace('data:', '').replace(/^.+,/, '');
 
-      vestido.value.imgVestidos?.push({idImgVestido: imageId.value, imgVestido: base64String});
+      vestido.value.imgVestido?.push({idImgVestido: imageId.value, imgVestido: base64String});
 
       // const response = await VestidoService.cadastrarVestido(vestido.value);
       // console.log(`HasErro ${response.hasError}`);
     };
     reader.readAsDataURL(selectedFile.value);
   } else {
-    vestido.value.imgVestidos.push({ idImgVestido: null, imgVestido: null });
+    vestido.value.imgVestido.push({ idImgVestido: null, imgVestido: null });
     // const response = await VestidoService.cadastrarVestido(vestido.value);
     // console.log(`HasErro ${response.hasError}`);
   }
@@ -182,8 +182,8 @@ const setImgVestidoToObjectSave = () => {
 const cadastrarVestido = async () => {
   initImgVestido();
 
-  if (!vestido.value.imgVestidos) {
-    vestido.value.imgVestidos = [{}];
+  if (!vestido.value.imgVestido) {
+    vestido.value.imgVestido = [{}];
   }
 
   const response = await VestidoService.cadastrarVestido(vestido.value);
@@ -195,14 +195,14 @@ const cadastrarVestido = async () => {
   //   reader.onloadend = async () => {
   //     const base64String = reader.result?.toString().replace('data:', '').replace(/^.+,/, '');
 
-  //     vestido.value.imgVestidos[0] = { idImgVestido: imageId.value, imgVestido: base64String };
+  //     vestido.value.imgVestido[0] = { idImgVestido: imageId.value, imgVestido: base64String };
 
   //     const response = await VestidoService.cadastrarVestido(vestido.value);
   //     console.log(`HasErro ${response.hasError}`);
   //   };
   //   reader.readAsDataURL(selectedFile.value);
   // } else {
-  //   vestido.value.imgVestidos[0] = { idImgVestido: null, imgVestido: null };
+  //   vestido.value.imgVestido[0] = { idImgVestido: null, imgVestido: null };
   //   const response = await VestidoService.cadastrarVestido(vestido.value);
   //   console.log(`HasErro ${response.hasError}`);
   // }

@@ -53,12 +53,13 @@
       </v-col>
     </v-row>
     <!-- Grid de Vestidos -->
+
     <v-data-table
       :items="locacao.locacoesVestido"
       :headers="headersVestidos">
-      <template v-slot:item.imgVestidos="{ item }">
+      <template v-slot:item.imgVestido="{ item }">
         <v-img
-          :src="getImageUrl(item.vestido?.imgVestidos?.[0]?.imgVestido)"
+          :src="getImageUrl(item.vestido?.imgVestido?.[0]?.imgVestido)"
           max-height="100"
           max-width="100"
           contain
@@ -258,7 +259,7 @@ const snackBar = ref({
   const valor = ref(0);
 
   const headersVestidos = [
-    { title: 'Foto', key: 'imgVestidos' },
+    { title: 'Foto', key: 'imgVestido' },
     { title: 'Vestido', key: 'nuVestido' },
     { title: 'Valor', key: 'vlrVestido' },
     { title: '', key: 'actions' },
@@ -272,6 +273,11 @@ const snackBar = ref({
   ];
 
   onMounted( () => {
+    setDadosLocacao()
+  })
+
+
+  const setDadosLocacao =  ( () => {
     clienteSelecionado.value = {
       idCliente: locacao.cliente.idCliente,
       nmCliente: locacao.cliente.nmCliente,
@@ -293,6 +299,20 @@ const snackBar = ref({
     dataRetirada.value = locacao.dtRetirada;
     dataDevolucao.value = locacao.dtDevolucao;
 
+
+    // locacao.locacoesVestido
+
+    // vestidosLocacao.value = []
+    // locacao.locacoesVestido.forEach(vestido => {
+    //   vestido.imgVestido = vestido.vestido.imgVestido;
+    //   vestido.nuVestido = vestido.vestido.nuVestido;
+    //   vestido.vlrVestido = vestido.vestido.vlrVestido;
+    //   vestido.flSituacao = vestido.vestido.flSituacao;
+    //   vestido.cor = vestido.vestido.cor;
+
+    //   vestidosLocacao.value.push(vestido);
+    // });
+
     pagamentos.value = []
 
     locacao.pagamentosLocacao.forEach(pgto => {
@@ -301,10 +321,12 @@ const snackBar = ref({
     });
 
     valorLocacao.value = locacao.vlrAluguel;
-  })
 
+    //console.log("setDados", locacao)
+  });
 
   const getImageUrl = (byteArray: string) => {
+    //console.log('byteArray', byteArray)
     if (!byteArray) return '';
 
     if (byteArray.startsWith('data:image')) {
@@ -331,11 +353,11 @@ const snackBar = ref({
 
   function adicionarVestidoLocal() {
     if (vestidoSelecionado.value) {
-      console.log('vestidoSelecionado.value', vestidoSelecionado.value.nuVestido)
+      //console.log('vestidoSelecionado.value', vestidoSelecionado.value.nuVestido)
 
       locacao.locacoesVestido.forEach( item => {
-        console.log('locacao.locacoesVestido', item.vestido.nuVestido)
-        console.log('vestido inserido 1 ', vestidoSelecionado.value.nuVestido == item.vestido.nuVestido )
+        //console.log('locacao.locacoesVestido', item.vestido.nuVestido)
+        //console.log('vestido inserido 1 ', vestidoSelecionado.value.nuVestido == item.vestido.nuVestido )
       })
 
       const vestidoInserido: Vestido[] = locacao.locacoesVestido
@@ -373,7 +395,7 @@ const snackBar = ref({
     pagamentos.value.push(pagamentoLocacao.value)
    };
 
-  const salvarLocacaoLocal = () => {
+  const salvarLocacaoLocal = async () => {
 
     if (!validaValores()) {
       snackBar.value.msg = 'Valor recebido é menor que o valor da locação.'
@@ -387,7 +409,6 @@ const snackBar = ref({
     locacao.pagamentosLocacao = pagamentos.value
     locacao.vlrAluguel = valorLocacao.value;
 
-
     locacao.locacoesVestido = locacao.locacoesVestido.map(lv => ({
       ...lv, // Mantém os outros dados do locacaoVestido
       vestido: {
@@ -395,14 +416,18 @@ const snackBar = ref({
         nuVestido: lv.vestido.nuVestido,
         vlrVestido: lv.vestido.vlrVestido,
         flSituacao: lv.vestido.flSituacao,
-        cor: lv.vestido.cor
+        cor: lv.vestido.cor,
+        imgVestido: lv.vestido.imgVestido
       }
     }));
 
+    await salvarLocacao();
 
-    //console.log(`locacao manupulada ${JSON.stringify(locacao)}`)
+    const locacaoSalva = await getLocacaoById(locacao.idLocacao!);
 
-    salvarLocacao();
+    locacao.locacoesVestido = locacaoSalva.locacoesVestido;
+
+    setDadosLocacao()
 
     // locacao.locacaoVestido.forEach(l => {
     //   console.log(`Vestido.... ${ JSON.stringify(l.vestido.nuVestido)}`)

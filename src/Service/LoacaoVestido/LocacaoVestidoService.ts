@@ -62,7 +62,7 @@ class LocacaoVestidoService {
       response.hasError = true;
     }
 
-    console.log('getLocacaoById Service', response)
+    // console.log('getLocacaoById Service', response)
 
     return response;
   }
@@ -73,7 +73,7 @@ class LocacaoVestidoService {
     }
 
     try {
-      console.log(`Cadastrando locação ${JSON.stringify(locacao)}`)
+      //console.log(`Cadastrando locação ${JSON.stringify(locacao)}`)
 
       const { data } = await axios.post(`${url_base}`, locacao, {
         headers: {
@@ -174,8 +174,6 @@ class LocacaoVestidoService {
 
       response.hasError = true;
     }
-
-    console.log('getLocacaoById Service', response)
 
     return response;
   }

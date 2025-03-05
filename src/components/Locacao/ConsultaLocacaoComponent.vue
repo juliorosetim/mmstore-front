@@ -146,9 +146,9 @@
 
 
   const editarCadastro = async (locacao: Locacao) => {
-    const locacaoLocal1 = await getLocacaoById(locacao.idLocacao!);
+    await getLocacaoById(locacao.idLocacao!);
 
-    console.log('getLocacaoById Tela', locacaoLocal1)
+    console.log("Locacao pela tela de consulta: ", locacaoStore.locacao);
 
     irParaEdicaoDeCadastro();
   }
